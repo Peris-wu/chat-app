@@ -13,20 +13,23 @@
 			</view>
 		</view>
 		
-		<view class="friends-application"></view>
+		<view class="friends-application">
+			
+		</view>
 		
 		<view class="friend-list">
-			<view class="list-item">
+			<view class="list-item" v-for="item in friends" :key="item.id">
 				<view class="left">
-					<view class="tip">1</view>
-					<image src="../../static/images/template/04.jpg"></image>
+					<view class="tip">{{item.tip}}</view>
+					<!-- <image src="../../static/images/index/apply.png"></image> -->
+					<image :src="`../../static/images/template/${item.imgUrl}`"></image>
 				</view>
 				<view class="right">
 					<view class="top">
-						<view class="friend-name">Peris</view>
+						<view class="friend-name">{{item.name}}</view>
 						<view class="time">上午7:45</view>
 					</view>
-					<view class="msg">我都不想点破你...</view>
+					<view class="msg">{{item.msg}}</view>
 				</view>
 			</view>
 		</view>
@@ -34,17 +37,22 @@
 </template>
 
 <script>
+	import datas from '../../mock/datas/index.js'
 	export default {
 		data() {
 			return {
-				title: 'Hello'
+				title: 'Hello',
+				friends:[]
 			}
 		},
 		onLoad() {
-
+			this.getFriendsList()
 		},
 		methods: {
-
+			getFriendsList(){
+				this.friends = datas.friends()
+				console.log(this.friends);
+			}
 		}
 	}
 </script>
@@ -90,6 +98,7 @@
 			display: flex;
 			width: 100%;
 			justify-content: space-between;
+			margin-bottom: 40rpx;
 			align-items: center;
 			.left{
 				position:relative;
@@ -113,6 +122,7 @@
 				}
 				image{
 					border-radius: 24rpx;
+					background-color: $uni-color-primary;
 				}
 			}
 			.right{
@@ -121,6 +131,7 @@
 					display: flex;
 					justify-content: space-between;
 					.friend-name{
+						color: $uni-text-color;
 						font-size: 36rpx;
 					}
 					.time{
@@ -129,8 +140,14 @@
 					}
 				}
 				.msg{
+					display:-webkit-box;
 					font-size: 28rpx;
 					color:$uni-text-color-grey;
+					overflow: hidden;
+					text-overflow: ellipsis;
+					-webkit-box-orient:vertical;
+					-webkit-line-clamp:1;
+					word-wrap: break-word;
 				}
 			}
 		}
