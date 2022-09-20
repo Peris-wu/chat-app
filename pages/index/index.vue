@@ -5,7 +5,9 @@
 				<image src="../../static/images/template/04.jpg"></image>
 			</view>
 			<view class="top-bar-middle">
-				<image src="../../static/images/index/火@3x.png"></image>
+					<view class="middle-wrap">
+						<image src="../../static/images/index/火@3x.png"></image>
+					</view>
 			</view>
 			<view class="top-bar-right">
 				<image src="../../static/images/index/search@3x.png"></image>
@@ -27,7 +29,8 @@
 				<view class="right">
 					<view class="top">
 						<view class="friend-name">{{item.name}}</view>
-						<view class="time">上午7:45</view>
+						<view class="time">{{item.time | timerFilter}}</view>
+						<!-- <view class="time">上午7:45</view> -->
 					</view>
 					<view class="msg">{{item.msg}}</view>
 				</view>
@@ -43,6 +46,57 @@
 			return {
 				title: 'Hello',
 				friends:[]
+			}
+		},
+		filters:{
+			timerFilter(time){
+				const oldTime = new Date(time)
+				const currentTime = new Date()
+				
+				// oldTime
+				let _timeStamp = oldTime.getTime()
+				let _year = oldTime.getFullYear()
+				let _month = oldTime.getMonth() + 1
+				let _date = oldTime.getDate()
+				let _hour = oldTime.getHours()
+				let _minutes = oldTime.getMinutes()
+				let _seconds = oldTime.getSeconds()
+				
+				// currentTime
+				let timeStamp = currentTime.getTime()
+				let year = currentTime.getFullYear()
+				let month = currentTime.getMonth() + 1
+				let date = currentTime.getDate()
+				let hour = currentTime.getHours()
+				let minutes = currentTime.getMinutes()
+				let seconds = currentTime.getSeconds()
+				
+				// 当天开始的时间戳
+				let currentPassTime =  (hour * 3600 + minutes * 60 + seconds) * 1000
+				let startTimeStamp = timeStamp - currentPassTime
+				let yesterdayStartTimeStamp = startTimeStamp - 24 * 60 * 60 * 1000
+				
+				// 同一天
+				if(_year === year && _month===month && _date===date){
+					if(_hour < 10 ){
+						_hour = `0${_hour}`
+					}
+					if(_minutes < 10){
+						_minutes = `0${_minutes}`
+					}
+					return `${_hour}:${_minutes}`
+				}
+				// 昨天
+				if(yesterdayStartTimeStamp < _timeStamp && _timeStamp < startTimeStamp){
+					if(_hour < 10 ){
+						_hour = `0${_hour}`
+					}
+					if(_minutes < 10){
+						_minutes = `0${_minutes}`
+					}
+					return `昨天${_hour}:${_minutes}`
+				}
+				
 			}
 		},
 		onLoad() {
@@ -63,29 +117,49 @@
 		height: 100%;
 	}
 	.top-bar{
-		display: flex;
+		position: relative;
 		height: 88rpx;
+		margin-top: 33rpx;
 		padding: $uni-padding-lr;
-		justify-content: space-between;
-		align-items: center;
+		padding-top: var(--status-bar-height);
 		box-shadow: 0rpx 1rpx 0rpx 0rpx rgba(0,0,0,0.1);
 		.top-bar-left{
+			position: absolute;
+			left: 32rpx;
+			top: 50%;
 			width: 68rpx;
 			height: 68rpx;
 			image{
 				border-radius: 16rpx;
 			}
+			transform: translateY(-50%);
 		}
 		.top-bar-middle{
-			width: 88rpx;
-			height: 42rpx;
+			position: absolute;
+			left: 0;
+			top: 50%;
+			width: 100%;
+			text-align: center;
+			transform: translateY(-50%);
+			.middle-wrap{
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				image{
+					width: 88rpx;
+					height: 42rpx;
+				}
+			}
+			
 		}
 		.top-bar-right{
+			position: absolute;
 			display: flex;
-			width: 140rpx;
-			height: 52rpx;
 			justify-content: space-between;
-			align-items: center;
+			width: 140rpx;
+			right: 32rpx;
+			top: 50%;
+			transform: translateY(-50%);
 			image{
 				width: 52rpx;
 				height: 52rpx;
@@ -93,13 +167,17 @@
 		}
 	}
 	.friend-list{
-		padding: 36rpx 32rpx 0 32rpx;
+		// margin-top: 18rpx;
+		padding-top: var(--status-bar-height);
 		.list-item{
 			display: flex;
-			width: 100%;
+			// width: 100%;
 			justify-content: space-between;
-			margin-bottom: 40rpx;
 			align-items: center;
+			padding: 18rpx 36rpx;
+			&:active{
+				background-color: $uni-bg-color-hover;
+			}
 			.left{
 				position:relative;
 				width: 96rpx;
