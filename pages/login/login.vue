@@ -9,8 +9,8 @@
 		<view class="login-content">
 			<view class="login-text">登录</view>
 			<view class="login-description">您好,欢迎来到login!</view>
-			<input type="text" />
-			<input type="password" />
+			<input type="text" placeholder="用户名/邮箱"/>
+			<input type="password" placeholder="密码"/>
 			
 			<button class="login-btn">登录</button>
 		</view>
