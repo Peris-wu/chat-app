@@ -1,22 +1,17 @@
 <template>
 	<view class="content">
-		<view class="top-bar">
-			<view class="top-bar-left">
-				<image src="../../static/images/template/04.jpg"></image>
-			</view>
-			<view class="top-bar-middle">
-					<view class="middle-wrap">
-						<image src="../../static/images/index/火@3x.png"></image>
-					</view>
-			</view>
-			<view class="top-bar-right">
-				<image src="../../static/images/index/search@3x.png"></image>
-				<image src="../../static/images/index/add group@3x.png"></image>
-			</view>
-		</view>
+		<chat-header :headerLeft="false">
+			<!-- <template v-slot:left>
+				<view>1</view>
+			</template> -->
+			<template v-slot:middle>
+				<view>
+					<input type="text" class="search"/>
+				</view>
+			</template>
+		</chat-header>
 		
 		<view class="friends-application">
-			
 		</view>
 		
 		<view class="friend-list">
@@ -41,6 +36,7 @@
 
 <script>
 	import datas from '../../mock/datas/index.js'
+	import chatHeader from '@/components/chat-header/chat-header.vue'
 	export default {
 		data() {
 			return {
@@ -107,125 +103,85 @@
 				this.friends = datas.friends()
 				console.log(this.friends);
 			}
+		},
+		components:{
+			chatHeader
 		}
 	}
 </script>
 
 <style scoped lang="scss">
-	image{
-		width: 100%;
-		height: 100%;
-	}
-	.top-bar{
-		position: relative;
-		height: 88rpx;
-		margin-top: 33rpx;
-		padding: $uni-padding-lr;
-		padding-top: var(--status-bar-height);
-		box-shadow: 0rpx 1rpx 0rpx 0rpx rgba(0,0,0,0.1);
-		.top-bar-left{
-			position: absolute;
-			left: 32rpx;
-			top: 50%;
-			width: 68rpx;
-			height: 68rpx;
-			image{
-				border-radius: 16rpx;
-			}
-			transform: translateY(-50%);
-		}
-		.top-bar-middle{
-			position: absolute;
-			left: 0;
-			top: 50%;
+	.content{
+		image{
 			width: 100%;
-			text-align: center;
-			transform: translateY(-50%);
-			.middle-wrap{
+			height: 100%;
+		}
+		.search{
+			text-align: left;
+			background-color: $uni-bg-color-grey;
+			padding: 10rpx 20rpx;
+		}
+		.friend-list{
+			// margin-top: 18rpx;
+			padding-top: var(--status-bar-height);
+			.list-item{
 				display: flex;
-				justify-content: center;
+				// width: 100%;
+				justify-content: space-between;
 				align-items: center;
-				image{
-					width: 88rpx;
-					height: 42rpx;
+				padding: 18rpx 36rpx;
+				&:active{
+					background-color: $uni-bg-color-hover;
 				}
-			}
-			
-		}
-		.top-bar-right{
-			position: absolute;
-			display: flex;
-			justify-content: space-between;
-			width: 140rpx;
-			right: 32rpx;
-			top: 50%;
-			transform: translateY(-50%);
-			image{
-				width: 52rpx;
-				height: 52rpx;
-			}
-		}
-	}
-	.friend-list{
-		// margin-top: 18rpx;
-		padding-top: var(--status-bar-height);
-		.list-item{
-			display: flex;
-			// width: 100%;
-			justify-content: space-between;
-			align-items: center;
-			padding: 18rpx 36rpx;
-			&:active{
-				background-color: $uni-bg-color-hover;
-			}
-			.left{
-				position:relative;
-				width: 96rpx;
-				height: 96rpx;
-				margin-right: 32rpx;
-				.tip{
-					position:absolute;
-					display: flex;
-					justify-content: center;
-					align-items: center;
-					color: #FFFFFF;
-					font-size: 24rpx;
-					top: -8rpx;
-					right: -10rpx;
-					width: 36rpx;
-					height: 36rpx;
-					background-color: #FF5D5B;
-					z-index: 1;
-					border-radius: $uni-border-radius-circle;
-				}
-				image{
-					border-radius: 24rpx;
-					background-color: $uni-color-primary;
-				}
-			}
-			.right{
-				flex: 1;
-				.top{
-					display: flex;
-					justify-content: space-between;
-					.friend-name{
-						color: $uni-text-color;
-						font-size: 36rpx;
-					}
-					.time{
+				.left{
+					position:relative;
+					width: 96rpx;
+					height: 96rpx;
+					margin-right: 32rpx;
+					.tip{
+						position:absolute;
+						display: flex;
+						justify-content: center;
+						align-items: center;
+						color: #FFFFFF;
 						font-size: 24rpx;
-						color: $uni-text-color-disable;
+						top: -8rpx;
+						right: -10rpx;
+						width: 36rpx;
+						height: 36rpx;
+						background-color: #FF5D5B;
+						z-index: 1;
+						border-radius: $uni-border-radius-circle;
+					}
+					image{
+						border-radius: 24rpx;
+						background-color: $uni-color-primary;
 					}
 				}
-				.msg{
-					display:-webkit-box;
-					font-size: 28rpx;
-					color:$uni-text-color-grey;
-					overflow: hidden;
-					text-overflow: ellipsis;
-					-webkit-box-orient:vertical;
-					-webkit-line-clamp:1;
-					word-wrap: break-word;
+				.right{
+					flex: 1;
+					.top{
+						display: flex;
+						justify-content: space-between;
+						.friend-name{
+							color: $uni-text-color;
+							font-size: 36rpx;
+						}
+						.time{
+							font-size: 24rpx;
+							color: $uni-text-color-disable;
+						}
+					}
+					.msg{
+						display:-webkit-box;
+						font-size: 28rpx;
+						color:$uni-text-color-grey;
+						overflow: hidden;
+						text-overflow: ellipsis;
+						-webkit-box-orient:vertical;
+						-webkit-line-clamp:1;
+						word-wrap: break-word;
+					}
 				}
 			}
 		}

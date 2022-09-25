@@ -1,7 +1,7 @@
 <template>
 	<view>
 		<view class="register-top">
-			<image src="../../static/images/register/arrow-left-bold.png"></image>
+			<image src="../../static/images/register/arrow-left-bold.png" @tap="toSignIn"></image>
 		</view>
 		<view class="register-logo">
 			<image src="../../static/images/login/fire-logo.png"></image>
@@ -9,9 +9,9 @@
 		<view class="register-content">
 			<view class="register-text">注册</view>
 			<view class="content-text">
-				<input v-model="username" type="text" placeholder="请输入名字" placeholder-style="color:#808080;fontSize:28rpx"/>
+				<input @blur="usernameBlur" v-model="username" type="text" placeholder="请输入名字" placeholder-style="color:#808080;fontSize:28rpx"/>
 				<image v-if="isInvalidUsername === true" src="../../static/images/register/pass.png"></image>
-				<view v-else-if="isInvalidUsername === false" class="username-error-tip">用户名已存在</view>
+				<view v-else-if="isInvalidUsername === false" class="username-error-tip">请填写用户名</view>
 			</view>
 			<view class="content-email">
 				<input @blur="emailBlur" v-model="email" type="text" placeholder="请输入邮箱" placeholder-style="color:#808080;fontSize:28rpx"/>
@@ -23,7 +23,7 @@
 				<input v-else v-model="pwd" type="password" placeholder="请输入密码" placeholder-style="color:#808080;fontSize:28rpx"/>
 				<image @click="switchoverStatus" :src="isShowPwd"></image>
 			</view>
-			<button class="register-btn" :style="{'backgroundColor':isRegister?'#FFE431':''}">注册</button>
+			<button class="register-btn" :style="{'backgroundColor':isRegister?'#FFE431':'' ,'color':isRegister?'#000000':''}">注册</button>
 		</view>
 	</view>
 </template>
@@ -53,10 +53,18 @@
 			switchoverStatus(){
 				this.defaultStatus = !this.defaultStatus
 			},
+			usernameBlur(){
+				this.username ? this.isInvalidUsername = true : this.isInvalidUsername = false
+			},
 			emailBlur(){
 				const reg = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(?:\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+$/
 				let result = reg.test(this.email)
-				result?this.isInvalidEmail = true:this.isInvalidEmail = false
+				result ? this.isInvalidEmail = true:this.isInvalidEmail = false
+			},
+			toSignIn(){
+				uni.navigateBack({
+					delta:1
+				})
 			}
 		}
 	}
@@ -164,6 +172,7 @@
 			background-color: $uni-bg-color-hover;
 			border-radius: 48rpx;
 			box-shadow: 0rpx 50rpx 32rpx -36rpx;
+			color:#FFFFFF;
 		}
 	}
 </style>

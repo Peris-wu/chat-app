@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<view class="login-top">
+		<view class="login-top" @tap="toSignUp">
 			注册
 		</view>
 		<view class="login-logo">
@@ -9,10 +9,10 @@
 		<view class="login-content">
 			<view class="login-text">登录</view>
 			<view class="login-description">您好,欢迎来到login!</view>
-			<input type="text" placeholder="用户名/邮箱"/>
-			<input type="password" placeholder="密码"/>
+			<input v-model="user" type="text" placeholder="用户名/邮箱"/>
+			<input v-model="pwd" type="password" placeholder="密码"/>
 			
-			<button class="login-btn">登录</button>
+			<button class="login-btn" @tap="login">登录</button>
 		</view>
 	</view>
 </template>
@@ -21,11 +21,26 @@
 	export default {
 		data() {
 			return {
-				
+				user:'',
+				pwd:''
 			}
 		},
 		methods: {
-			
+			toSignUp(){
+				uni.navigateTo({
+					url:'/pages/register/register'
+				})
+			},
+			login(){
+				if(this.user && this.pwd){
+					console.log('success login')
+					return 
+				}
+				uni.showToast({
+					title:'登录失败',
+					icon:'error'
+				})
+			}
 		}
 	}
 </script>
