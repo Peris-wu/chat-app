@@ -1,14 +1,8 @@
 <template>
 	<view class="content">
-		<chat-header :headerLeft="false">
-			<!-- <template v-slot:left>
-				<view>1</view>
-			</template> -->
-			<template v-slot:middle>
-				<view>
-					<input type="text" class="search"/>
-				</view>
-			</template>
+		<chat-header>
+			<!-- <template v-slot:left></template> -->
+			<!-- <template v-slot:middle></template> -->
 		</chat-header>
 		
 		<view class="friends-application">
