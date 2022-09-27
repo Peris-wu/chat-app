@@ -12,7 +12,7 @@
 				</view>
 			</slot>
 		</view>
-		<view class="top-bar-right" v-if="headerRight">
+		<view class="top-bar-right" :style="{minWidth:`${headerRightW}rpx`}" v-if="headerRight">
 			<slot name="right">
 				<image src="../../static/images/index/search@3x.png"></image>
 				<image src="../../static/images/index/add group@3x.png"></image>
@@ -37,10 +37,14 @@
 				type: Boolean,
 				default: true
 			},
+			headerRightW:{
+				type: Number|String,
+				default: 140
+			},
 			isShowShadow:{
 				type: Boolean,
 				default: true
-			}
+			},
 		},
 		data() {
 			return {
@@ -91,7 +95,6 @@
 			display: flex;
 			justify-content: space-between;
 			min-width: 140rpx;
-			// max-width: 140rpx;
 			right: 32rpx;
 			image{
 				width: 52rpx;
