@@ -13,32 +13,44 @@
 		</chat-header>
 		
 		<view class="search-list">
-			<view class="title">
-				用户
-			</view>
-			<view class="list">
-				<view class="item">
-					<view class="item-left">
-						<image src="../../static/images/template/02.jpg"></image>
-						<view class="name-text">齐天大圣</view>
-					</view>
-					<view class="item-right">发消息</view>
-				</view>
-			</view>
+			<list-style v-for="item in searchResult" :key="item.title" :searchResult="item"></list-style>
 		</view>
 	</view>
 </template>
 
 <script>
 	import chatHeader from '../../components/chat-header/chat-header.vue'
+	import listStyle from './listStyle/listStyle.vue'
 	export default {
 		data() {
 			return {
-				
+				searchResult:[
+					{
+						title:'用户',
+						list:[
+							{
+								id: 1,
+								imgUrl:'',
+								name:''
+							}
+						]
+					},
+					{
+						title:'群组',
+						list:[
+							{
+								id: 1,
+								imgUrl:'',
+								name:''
+							}
+						]
+					}
+				]
 			}
 		},
 		components:{
-			chatHeader
+			chatHeader,
+			listStyle
 		},
 		methods: {
 			
@@ -74,46 +86,6 @@
 		.search-list{
 			margin-top: 34rpx;
 			padding: $uni-padding-lr;
-			.title{
-				font-size: 44rpx;
-				color: #272832;
-				letter-spacing: -0.75rpx;
-				font-weight: 600;
-			}
-			.list{
-				margin-top: 20rpx;
-				.item{
-					display: flex;
-					align-items: center;
-					margin-bottom: 40rpx;
-					.item-left{
-						display: flex;
-						align-items: center;
-						flex: 1;
-						image{
-							width: 80rpx;
-							height: 80rpx;
-							border-radius: 20rpx;
-						}
-						.name-text{
-							font-size: 36rpx;
-							color: #272832;
-							padding-left: 32rpx;
-						}
-					}
-					.item-right{
-						display: flex;
-						justify-content: center;
-						align-items: center;
-						width: 120rpx;
-						height: 48rpx;
-						border-radius: 24rpx;
-						background: #FFE431;
-						font-size: 24rpx;
-						color: #272832;
-					}
-				}
-			}
 		}
 	}
 </style>
