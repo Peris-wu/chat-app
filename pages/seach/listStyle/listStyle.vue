@@ -5,12 +5,14 @@
 			{{searchResult.title}}
 		</view>
 		<view class="list">
-			<view class="item">
+			<view class="item" v-for="searchItem in searchResult" :key="searchItem.id">
 				<view class="item-left">
-					<image src="../../../static/images/template/02.jpg"></image>
-					<view class="name-text">齐天大圣</view>
+					<image :src="require(`../../../static/images/template/${searchItem.imgUrl}`)"></image>
+					<view class="name-text" v-html="searchItem.name">
+					</view>
 				</view>
-				<view class="item-right">发消息</view>
+				<view class="item-right send" v-if="searchItem.tip === 1">发消息</view>
+				<view class="item-right add" v-if="searchItem.tip === 0">加好友</view>
 			</view>
 		</view>
 	</view>
@@ -20,8 +22,8 @@
 	export default {
 		props:{
 			searchResult:{
-				type: Object,
-				default:{}
+				type: Array,
+				default:[]
 			}
 		},
 		data() {
@@ -70,10 +72,16 @@
  			width: 120rpx;
  			height: 48rpx;
  			border-radius: 24rpx;
- 			background: #FFE431;
  			font-size: 24rpx;
- 			color: #272832;
  		}
+		.send{
+			color: #272832;
+			background: #FFE431;
+		}
+		.add{
+			background: rgba(74,170,255,0.10);
+			color: #4AAAFF;
+		}
  	}
  }
 </style>

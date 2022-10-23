@@ -11,7 +11,7 @@
 		<view class="friend-list">
 			<view class="list-item" v-for="item in friends" :key="item.id">
 				<view class="left">
-					<view class="tip">{{item.tip}}</view>
+					<view class="tip">{{item.msgNum}}</view>
 					<!-- <image src="../../static/images/index/apply.png"></image> -->
 					<image :src="`../../static/images/template/${item.imgUrl}`"></image>
 				</view>
@@ -94,7 +94,7 @@
 		},
 		methods: {
 			getFriendsList(){
-				this.friends = datas.friends()
+				this.friends = datas.users()
 				console.log(this.friends);
 			}
 		},
