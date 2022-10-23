@@ -3,17 +3,21 @@
 		<chat-header :headerLeft="false" :headerRightW="84">
 			<template v-slot:middle>
 				<view class="top-bar-middle">
-					<input type="text" class="top-bar-input"/>
+					<input type="text" class="top-bar-input" @input="iptSearch"/>
 					<image src="../../static/images/common/search@3x.png"></image>
 				</view>
 			</template>
 			<template v-slot:right>
-				<view class="top-bar-text">取消</view>
+				<view class="top-bar-text" @tap="backTo">取消</view>
 			</template>
 		</chat-header>
 		
 		<view class="search-list">
-			<list-style v-for="item in searchResult" :key="item.title" :searchResult="item"></list-style>
+			<view class="title" v-if="searchData.length > 0">
+				<!-- <slot name="title-style">{{searchResult}}</slot> -->
+				用户
+			</view>
+			<list-style :searchResult="searchData"></list-style>
 		</view>
 	</view>
 </template>
@@ -21,17 +25,22 @@
 <script>
 	import chatHeader from '../../components/chat-header/chat-header.vue'
 	import listStyle from './listStyle/listStyle.vue'
+	import searchFunc from '@/mock/datas/index.js'
 	export default {
 		data() {
 			return {
+				iptValue:'',
+				searchList:[],
+				searchData:[],
+				friendsList:[],
 				searchResult:[
 					{
 						title:'用户',
 						list:[
 							{
 								id: 1,
-								imgUrl:'',
-								name:''
+								imgUrl:'../../../static/images/template/02.jpg',
+								name:'齐天大圣'
 							}
 						]
 					},
@@ -40,8 +49,8 @@
 						list:[
 							{
 								id: 1,
-								imgUrl:'',
-								name:''
+								imgUrl:'../../../static/images/template/02.jpg',
+								name:'齐天大圣'
 							}
 						]
 					}
@@ -53,7 +62,29 @@
 			listStyle
 		},
 		methods: {
-			
+			iptSearch(e){
+				this.iptValue = e.target.value
+				this.searchData = []
+				this.searchList = searchFunc.users()
+				this.friendsList = searchFunc.friends()
+				const exp = eval(`/${this.iptValue}/g`)
+				if(this.iptValue.length > 0){
+					this.searchList.forEach(item=>{
+						if(item.name.search(this.iptValue) !== -1){
+							this.friendsList.forEach(firendItem=>{
+								if(firendItem.firend === item.id){
+									item.tip = 1
+								}
+							})
+							item.name = item.name.replace(exp,"<block style='color:#4AAAFF;'>"+this.iptValue+"</block>")
+							this.searchData.push(item)
+						}
+					})
+				}
+			},
+			backTo(){
+				uni.navigateBack(-1)
+			}
 		}
 	}
 </script>
@@ -86,6 +117,12 @@
 		.search-list{
 			margin-top: 34rpx;
 			padding: $uni-padding-lr;
+			.title{
+				font-size: 44rpx;
+				color: #272832;
+				letter-spacing: -0.75rpx;
+				font-weight: 600;
+			}
 		}
 	}
 </style>
