@@ -61,14 +61,16 @@
 	}
 	.top-bar{
 		display: flex;
-		justify-content: center;
+		justify-content: space-between;
 		align-items: center;
 		height: 88rpx;
-		margin-top: 33rpx;
+		// margin-top: 33rpx;
 		padding: $uni-padding-lr;
 		padding-top: var(--status-bar-height);
 		// box-shadow: 0rpx 1rpx 0rpx 0rpx rgba(0,0,0,0.1);
 		.top-bar-left{
+			display: flex;
+			align-items: center;
 			min-width: 140rpx;
 			// max-width: 140rpx;
 			height: 68rpx;
