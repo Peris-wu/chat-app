@@ -13,7 +13,7 @@
 				<view class="left">
 					<view class="tip">{{item.msgNum}}</view>
 					<!-- <image src="../../static/images/index/apply.png"></image> -->
-					<image :src="`../../static/images/template/${item.imgUrl}`"></image>
+					<image :src="`../../static/images/template/${item.imgUrl}`" @tap="toUserHome"></image>
 				</view>
 				<view class="right">
 					<view class="top">
@@ -96,6 +96,11 @@
 			getFriendsList(){
 				this.friends = datas.users()
 				console.log(this.friends);
+			},
+			toUserHome(){
+				uni.navigateTo({
+					url:'/pages/userhome/userhome'
+				})
 			}
 		},
 		components:{
