@@ -118,7 +118,7 @@
 					// 隐藏
 					animationWrap.bottom(-this.clientHeight).step()
 					animationBtns.bottom(-156).step()
-					animationPic.width(200).height(200).step()
+					animationPic.width().height().step()
 					animationIcon.width(32).height(32).step()
 					animationBgc.backgroundColor('rgba(255,228,49,0)').step()
 				}
