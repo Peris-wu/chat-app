@@ -28,9 +28,11 @@
 			style="height: 100%;"
 			:show-scrollbar="false"
 			>
-				<view class="user-commom" :class="msgItem.id === 'b'? 'myself-right':'user-left'"  v-for="msgItem in msgs" :key="msgItem.time">
-					<view class="msg-time">
+				<view class="user-commom" :class="msgItem.id === 'b'? 'myself-right':'user-left'"  v-for="(msgItem,index) in msgs" :key="index">
+					<view class="msg-time" v-show="msgItem.time !== ''">
 						{{msgItem.time | timerFilter}}
+					</view>
+					<view class="msg-time" v-show="msgItem.time === ''">
 					</view>
 					<view class="icon-msg">
 						<view class="icon">
@@ -76,7 +78,8 @@
 		data() {
 			return {
 				msgs:[],
-				picUrls:[]
+				picUrls:[],
+				referenceTime: new Date()
 			}
 		},
 		filters:{
@@ -173,8 +176,23 @@
 						this.picUrls.unshift(`../../static/images/template/${msg.message}`)
 						// msg.message = `../../static/images/template/${msg.message}`
 					}
+					const time = this.spaceTime(this.referenceTime,msg.time)
+					if(time){
+						this.referenceTime = time
+					}
+					msg.time = time
 					this.msgs.unshift(msg)
 				})
+			},
+			spaceTime(old_time,current_time){
+				const o_time = new Date(old_time)
+				const c_time = new Date(current_time)
+				const v_time = o_time - c_time
+				if(v_time >  (60*5*1000)){
+					return c_time
+				}else{
+					return ''
+				}
 			}
 		},
 		mounted(){
