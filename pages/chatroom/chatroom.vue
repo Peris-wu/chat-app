@@ -68,12 +68,16 @@
 				</view> -->
 			</scroll-view>
 		</view>
+		<view class="chat-btm-wrap">
+			<chat-btm></chat-btm>
+		</view>
 	</view>
 </template>
 
 <script>
 	import chatHeader from '@/components/chat-header/chat-header.vue'
 	import data from '@/mock/datas/index.js'
+	import chatBtm from '@/components/chat-btm/chat-btm.vue'
 	export default {
 		data() {
 			return {
@@ -155,7 +159,8 @@
 			}
 		},
 		components:{
-			chatHeader
+			chatHeader,
+			chatBtm
 		},
 		methods: {
 			previewImage(msgItem){
@@ -205,6 +210,7 @@
 .chat-room{
 	height: 100vh;
 	background-color: #F4F4F4;
+	// padding-bottom: 120rpx;
 	.header{
 		.left{
 			width: 48rpx;
@@ -233,6 +239,7 @@
 		height: calc(100% - 88rpx);
 		box-sizing: border-box;
 		padding: 8rpx 32rpx 0 32rpx;
+		padding-bottom: var(--status-bar-height);
 		scrollbar-width:none;
 		.msg-common{
 			max-width: 480rpx;
@@ -297,6 +304,12 @@
 				}
 			}
 		}
+	}
+	.chat-btm-wrap{
+		position: fixed;
+		width: 100%;
+		left: 0;
+		bottom: 0;
 	}
 }
 </style>
