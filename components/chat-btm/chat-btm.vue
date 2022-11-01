@@ -15,9 +15,11 @@
 						<textarea
 							auto-height="true"
 							style="width: 100%"
+							v-model="inptValue"
+							@input="inptArea"
 						></textarea>
 					</scroll-view>
-					<view v-show="!isKeyboard" class="txt-center">
+					<view class="txt-center" v-show="!isKeyboard">
 						按住说话
 					</view>
 				</view>
@@ -34,12 +36,17 @@
 			
 			
 			<view>
-				<image src="../../static/images/chatroom/emoji.png" mode="aspectFill"></image>
+				<image 
+					src="../../static/images/chatroom/emoji.png" 
+					mode="aspectFill"
+					@tap="showOption"
+				></image>
 			</view>
 			<view>
 				<image class="add-img" src="../../static/images/chatroom/add.png" mode="aspectFill"></image>
 			</view>
 		</view>
+		<view class="options" v-show="isShowOption" :animation="animationOption"></view>
 	</view>
 </template>
 
@@ -50,6 +57,9 @@
 			return {
 				areaHeight:0,
 				isKeyboard: true,
+				isShowOption: false,
+				animationOption: {},
+				inptValue:'',
 				modeImg: '../../static/images/chatroom/yy.png'
 			};
 		},
@@ -61,6 +71,36 @@
 				}else{
 					this.isKeyboard = true
 					this.modeImg = '../../static/images/chatroom/yy.png'
+				}
+			},
+			showOption(){
+				// const animationOption = uni.createAnimation({
+				//   duration: 300,
+				//   timingFunction: "ease",
+				// })
+				this.isShowOption = !this.isShowOption
+				// if(this.isShowOption){
+				// 	animationOption.height(230).step()
+				// }else{
+				// 	animationOption.height(0).step()
+				// }
+				this.$nextTick(()=>{
+					this.getElementStyle()
+				})
+				// this.animationOption = animationOption.export()
+			},
+			getElementStyle(bool){
+				const query = uni.createSelectorQuery().in(this)
+				query.select('.chat-btm').boundingClientRect(data=>{
+					// this.clientHeight = data.height
+					this.$emit('handleHeight',data.height)
+				}).exec()
+			},
+			inptArea(e){
+				const value = e.detail.value
+				if(value.indexOf('\n') !== -1 && value.length > 1){
+					this.$emit('inptArea',value)
+					this.inptValue = ''
 				}
 			}
 		}
@@ -89,7 +129,6 @@
 				.textarea-style{
 					flex: 1;
 					background-color: #fff;
-					min-height: 72rpx;
 					margin: 0 20rpx;
 					padding: 20rpx;
 					box-sizing: border-box;
@@ -101,6 +140,7 @@
 					}
 					.txt-center{
 						text-align: center;
+						line-height: 42rpx;
 					}
 				}
 				
@@ -117,6 +157,12 @@
 				.add-img{
 					padding-left: 24rpx;
 				}
+			}
+			.options{
+				width: 100%;
+				height: 460rpx;
+				background-color: rgba(237,238,239,1);
+				transition: all 0.3s ease;
 			}
 	}
 </style>
