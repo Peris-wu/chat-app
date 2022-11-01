@@ -27,9 +27,12 @@
 			:scroll-with-animation="true" 
 			style="height: 100%;"
 			:show-scrollbar="false"
+			:scroll-into-view="scrollIntoV"
+			:scroll-anchoring="true"
+			 :style="{paddingBottom:initPad?`${padBottom}px`:``}"
 			>
-				<view class="user-commom" :class="msgItem.id === 'b'? 'myself-right':'user-left'"  v-for="(msgItem,index) in msgs" :key="index">
-					<view class="msg-time" v-show="msgItem.time !== ''">
+				<view :id="`msg${msgItem.tip}`" class="user-commom" :class="msgItem.id === 'b'? 'myself-right':'user-left'"  v-for="(msgItem,index) in msgs" :key="index">
+					<view class="msg-time" v-show="msgItem.time">
 						{{msgItem.time | timerFilter}}
 					</view>
 					<view class="msg-time" v-show="msgItem.time === ''">
@@ -52,24 +55,11 @@
 						</view>
 					</view>
 				</view>
-				<!-- <view class="myself-right">
-					<view class="msg-time">
-						11月15日 22:23
-					</view>
-					<view class="icon-msg user-commom">
-						<view class="icon">
-							<image class="icon-style" src="../../static/images/template/01.jpg"></image>
-						</view>
-						<view class="msg msg-common">
-							的，啥可大可久多久的开发了大
-							地方，是的开发绿色健康。
-						</view>
-					</view>
-				</view> -->
+				<view :style="{paddingBottom:`${padBottom}px`}"></view>
 			</scroll-view>
 		</view>
 		<view class="chat-btm-wrap">
-			<chat-btm></chat-btm>
+			<chat-btm @inptArea="inptArea" @handleHeight="handleHeight"></chat-btm>
 		</view>
 	</view>
 </template>
@@ -83,6 +73,10 @@
 			return {
 				msgs:[],
 				picUrls:[],
+				scrollIntoV:'',
+				padBottom:'51',
+				initPad:false,
+				initTime:0,
 				referenceTime: new Date()
 			}
 		},
@@ -188,6 +182,13 @@
 					msg.time = time
 					this.msgs.unshift(msg)
 				})
+				this.scrollToBottom()
+			},
+			scrollToBottom(){
+				this.$nextTick(()=>{
+					const len = this.msgs.length
+					this.scrollIntoV = `msg${this.msgs[len-1].tip}`
+				})
 			},
 			spaceTime(old_time,current_time){
 				const o_time = new Date(old_time)
@@ -198,6 +199,35 @@
 				}else{
 					return ''
 				}
+			},
+			handleHeight(height){
+				this.padBottom = height
+				// 同一个scrollIntoV 无法进行过渡 需要重置scrollIntoV 
+				this.scrollIntoV  = ''
+				this.scrollToBottom()
+			},
+			inptArea(value){
+				const len = this.msgs.length
+				let lastTime = this.msgs[len - 1]
+				let c_time = new Date()
+				let lock = false
+				if(c_time - 1000*60*5 > this.initTime){
+					this.initTime = c_time
+					lock = true
+				}else{
+					lock = false
+				}
+				const data = {
+					id: 'b',
+					imgUrl: '02.jpg',
+					message: value,
+					types: 0,
+					time: lock?this.initTime:'',
+					tip:len
+				}
+				this.msgs.push(data)
+				this.scrollToBottom()
+				console.log(value)
 			}
 		},
 		mounted(){
@@ -303,6 +333,10 @@
 					}
 				}
 			}
+		}
+		.pad-btm{
+			padding-bottom: 102rpx;
+			// padding-bottom: var(--status-bar-height);
 		}
 	}
 	.chat-btm-wrap{
