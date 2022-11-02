@@ -29,7 +29,6 @@
 			:show-scrollbar="false"
 			:scroll-into-view="scrollIntoV"
 			:scroll-anchoring="true"
-			 :style="{paddingBottom:initPad?`${padBottom}px`:``}"
 			>
 				<view :id="`msg${msgItem.tip}`" class="user-commom" :class="msgItem.id === 'b'? 'myself-right':'user-left'"  v-for="(msgItem,index) in msgs" :key="index">
 					<view class="msg-time" v-show="msgItem.time">
@@ -201,6 +200,7 @@
 				}
 			},
 			handleHeight(height){
+				// console.log(height);
 				this.padBottom = height
 				// 同一个scrollIntoV 无法进行过渡 需要重置scrollIntoV 
 				this.scrollIntoV  = ''
@@ -240,6 +240,8 @@
 .chat-room{
 	height: 100vh;
 	background-color: #F4F4F4;
+	overflow: hidden;
+	// overflow-y: hidden;
 	// padding-bottom: 120rpx;
 	.header{
 		.left{
@@ -269,8 +271,8 @@
 		height: calc(100% - 88rpx);
 		box-sizing: border-box;
 		padding: 8rpx 32rpx 0 32rpx;
-		padding-bottom: var(--status-bar-height);
-		scrollbar-width:none;
+		// margin-bottom: var(--status-bar-height);
+		// padding-bottom: 200rpx;
 		.msg-common{
 			max-width: 480rpx;
 			padding: 16rpx 24rpx;
