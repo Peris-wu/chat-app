@@ -95,6 +95,8 @@
 			flex: 1;
 			padding: 10rpx 0;
 			text-align: center;
+			font-size: 52rpx;
+			line-height: 80rpx;
 		}
 	}
 }

@@ -44,7 +44,12 @@
 				></image>
 			</view>
 			<view>
-				<image class="add-img" src="../../static/images/chatroom/add.png" mode="aspectFill"></image>
+				<image 
+					class="add-img" 
+					src="../../static/images/chatroom/add.png" 
+					mode="aspectFill"
+					@tap="add"
+				></image>
 			</view>
 		</view>
 		<view class="options" v-show="isShowOption">
@@ -62,6 +67,28 @@
 			</view>
 			<emoji-view @emoji="emoji"></emoji-view>
 		</view>
+		<view class="option-add" v-show="isShowOptionAdd">
+			<view class="o-item">
+				<image @tap="send('album')" src="../../static/images/chatroom/photo.png" mode=""></image>
+				<span class="title">照片</span>
+			</view>
+			<view class="o-item">
+				<image src="../../static/images/chatroom/camer.png" mode=""></image>
+				<span class="title">照片</span>
+			</view>
+			<view class="o-item">
+				<image src="../../static/images/chatroom/position.png" mode=""></image>
+				<span class="title">照片</span>
+			</view>
+			<view class="o-item">
+				<image src="../../static/images/chatroom/video.png" mode=""></image>
+				<span class="title">照片</span>
+			</view>
+			<view class="o-item">
+				<image src="../../static/images/chatroom/file.png" mode=""></image>
+				<span class="title">照片</span>
+			</view>
+		</view>
 	</view>
 </template>
 
@@ -74,6 +101,7 @@
 				areaHeight:0,
 				isKeyboard: true,
 				isShowOption: false,
+				isShowOptionAdd:false,
 				animationOption: {},
 				inptValue:'',
 				modeImg: '../../static/images/chatroom/yy.png'
@@ -107,6 +135,9 @@
 				//   duration: 300,
 				//   timingFunction: "ease",
 				// })
+				if(this.isShowOptionAdd){
+					this.isShowOptionAdd = false
+				}
 				this.isShowOption = !this.isShowOption
 				// if(this.isShowOption){
 				// 	animationOption.height(230).step()
@@ -122,14 +153,14 @@
 				const query = uni.createSelectorQuery().in(this)
 				query.select('.chat-btm').boundingClientRect(data=>{
 					// this.clientHeight = data.height
-					console.log(data.height);
+					// console.log(data.height);
 					this.$emit('handleHeight',data.height+20)
 				}).exec()
 			},
 			inptArea(e){
 				const value = e.detail.value
 				if(value.indexOf('\n') !== -1 && value.length > 1){
-					this.$emit('inptArea',value)
+					this.handlMsg(value,0)
 					this.inptValue = ''
 				}
 			},
@@ -142,15 +173,53 @@
 			},
 			sendMsg(){
 				if(this.inptValue.length > 0){
-					this.$emit('inptArea',this.inptValue)
+					this.handlMsg(this.inptValue,0)
 					this.inptValue = ''
 				}
 			},
 			inptFocus(){
 				this.isShowOption = false
+				this.isShowOptionAdd = false
 				this.$nextTick(()=>{
 					this.getElementStyle()
 				})
+			},
+			add(){
+				if(this.isShowOption){
+					this.isShowOption = false
+				}
+				this.isShowOptionAdd = !this.isShowOptionAdd
+			},
+			// send
+			send(label){
+				let count
+				label === 'album'?count = 9:count = 1
+				uni.chooseImage({
+					count: count, //默认9
+					sizeType: ['original', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
+					sourceType: [label], //从相册选择
+					success:  (res) =>{
+						// console.log(JSON.stringify(res.tempFilePaths));
+						// console.log(res.tempFilePaths);
+						const imgList = res.tempFilePaths
+						imgList.forEach(img=>{
+							this.handlMsg(img,1)
+						})
+						const query = uni.createSelectorQuery().in(this)
+						query.select('.chat-btm').boundingClientRect(data=>{
+							// this.clientHeight = data.height
+							console.log(data.height);
+							this.$emit('handleHeight',data.height+150)
+						}).exec()
+					}
+				});
+			},
+			handlMsg(message,types){
+				const data = {
+					message,
+					types
+				}
+				this.$emit('inptArea',data)
 			}
 		}
 	}
@@ -253,6 +322,34 @@
 					.send-extral{
 						color: #fff;
 						background-color: rgba(43, 238, 9, 0.9);
+					}
+				}
+			}
+			.option-add{
+				display: flex;
+				flex-wrap: wrap;
+				width: 100%;
+				height: 400rpx;
+				box-sizing: border-box;
+				padding: 20rpx;
+				background-color: rgba(237,238,239,1);
+				.o-item{
+					display: flex;
+					flex-direction: column;
+					justify-content: center;
+					align-items: center;
+					width: 25%;
+					image{
+						width: 72rpx;
+						height: 72rpx;
+						padding: 24rpx;
+						background-color: rgba(255,255,255,1);
+						border-radius: 24rpx;
+						margin-bottom: 10rpx;
+					}
+					.title{
+						font-size: 24rpx;
+						color: rgba(39,40,50,0.5);
 					}
 				}
 			}
