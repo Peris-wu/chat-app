@@ -44,10 +44,11 @@
 							<view v-if="msgItem.types === 0" class="world-break">
 								{{msgItem.message}}
 							</view>
+							<!-- :src="require(`../../static/images/template/${msgItem.message}`)" -->
 							<image 
 								v-if="msgItem.types === 1"
 								class="msg-img"
-								:src="require(`../../static/images/template/${msgItem.message}`)"
+								:src="msgItem.message"
 								mode="widthFix"
 								@tap="previewImage(msgItem)"
 							></image>
@@ -172,7 +173,7 @@
 					// msg.imgUrl = `../../static/images/template/${msg.imgUrl}`
 					if(msg.types === 1){
 						this.picUrls.unshift(`../../static/images/template/${msg.message}`)
-						// msg.message = `../../static/images/template/${msg.message}`
+						msg.message = `../../static/images/template/${msg.message}`
 					}
 					const time = this.spaceTime(this.referenceTime,msg.time)
 					if(time){
@@ -200,7 +201,7 @@
 				}
 			},
 			handleHeight(height){
-				// console.log(height);
+				console.log(height);
 				this.padBottom = height
 				// 同一个scrollIntoV 无法进行过渡 需要重置scrollIntoV 
 				this.scrollIntoV  = ''
@@ -220,14 +221,14 @@
 				const data = {
 					id: 'b',
 					imgUrl: '02.jpg',
-					message: value,
-					types: 0,
+					message: value.message,
+					types: value.types,
 					time: lock?this.initTime:'',
 					tip:len
 				}
 				this.msgs.push(data)
+				this.scrollIntoV = ''
 				this.scrollToBottom()
-				console.log(value)
 			}
 		},
 		mounted(){
@@ -244,6 +245,7 @@
 	// overflow-y: hidden;
 	// padding-bottom: 120rpx;
 	.header{
+		padding-top: 50rpx;
 		.left{
 			width: 48rpx;
 			height: 48rpx;
@@ -268,7 +270,7 @@
 		}
 	}
 	.chat-main{
-		height: calc(100% - 88rpx);
+		height: calc(100% - 138rpx);
 		box-sizing: border-box;
 		padding: 8rpx 32rpx 0 32rpx;
 		// margin-bottom: var(--status-bar-height);
