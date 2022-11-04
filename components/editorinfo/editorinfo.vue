@@ -26,10 +26,10 @@
 		</view>
 		<view class="edit-area">
 			<view v-if="editorType === 'textarea'">
-				<textarea v-model="showMsg" :value="showMsg" maxlength="120"></textarea>
+				<textarea v-model="showMsg" maxlength="120"></textarea>
 			</view>
 			<view v-if="editorType === 'input'">
-				<input v-model="showMsg" :value="showMsg"></input>
+				<input v-model="showMsg" ></input>
 			</view>
 		</view>
 	</view>

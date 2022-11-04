@@ -52,6 +52,19 @@
 								mode="widthFix"
 								@tap="previewImage(msgItem)"
 							></image>
+							<view 
+								class="voice" 
+								:class="{'voice-reverse': msgItem.id === 'a'?false:true}"
+								v-if="msgItem.types === 2"
+								:style="{width:`${calWidth(msgItem.message.time)}px`}"
+							>
+								<image src="../../static/images/chatroom/voice-input.png" mode="aspectFill"></image>
+								<span>
+									{{msgItem.message.time}}
+									<span>"</span>
+								</span>
+								
+							</view>
 						</view>
 					</view>
 				</view>
@@ -157,9 +170,15 @@
 			chatBtm
 		},
 		methods: {
+			// 计算语音宽度
+			calWidth(width){
+				// 480是消息最宽像素 60秒暂定为最长语音
+				return Math.ceil(480 * width / 60)
+			},
 			previewImage(msgItem){
+				console.log(msgItem);
 				const index = this.picUrls.findIndex(item=>{
-					return item === `../../static/images/template/${msgItem.message}`
+					return item === msgItem.message
 				})
 				uni.previewImage({
 					current: index,
@@ -217,6 +236,9 @@
 					lock = true
 				}else{
 					lock = false
+				}
+				if(value.types === 1){
+					this.picUrls.push(value.message)
 				}
 				const data = {
 					id: 'b',
@@ -300,8 +322,6 @@
 		}
 		.user-commom{
 			margin: 20rpx 0;
-		}
-		.user-left{
 			.icon-msg{
 				display: flex;
 				margin-top: 20rpx;
@@ -312,10 +332,25 @@
 					.world-break{
 						word-break: break-all;
 					}
-					.mgs-img{
-						width: 100%;
+					.msg-img{
+						max-width: 240rpx;
 						border-radius: 20rpx;
-						
+					}
+					.voice{
+						display: flex;
+						align-items: center;
+						image{
+							width: 40rpx;
+							height: 40rpx;
+							transform: rotate(180deg);
+						}
+					}
+					.voice-reverse{
+						display: flex;
+						flex-direction: row-reverse;
+						image{
+							transform: rotate(360deg);
+						}
 					}
 				}
 			}
@@ -339,7 +374,7 @@
 			}
 		}
 		.pad-btm{
-			padding-bottom: 102rpx;
+			// padding-bottom: 102rpx;
 			// padding-bottom: var(--status-bar-height);
 		}
 	}

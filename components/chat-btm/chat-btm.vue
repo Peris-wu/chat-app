@@ -14,13 +14,18 @@
 					<scroll-view scroll-y="true" class="scroll-v" v-show="isKeyboard">
 						<textarea
 							auto-height="true"
-							style="width: 100%"
+							class="area-btm"
 							v-model="inptValue"
 							@input="inptArea"
 							@focus="inptFocus"
 						></textarea>
 					</scroll-view>
-					<view class="txt-center" v-show="!isKeyboard">
+					<view 
+						class="txt-center" 
+						v-show="!isKeyboard" 
+						@touchstart="touchstart"
+						@touchend="touchend"
+					>
 						按住说话
 					</view>
 				</view>
@@ -74,19 +79,19 @@
 			</view>
 			<view class="o-item">
 				<image src="../../static/images/chatroom/camer.png" mode=""></image>
-				<span class="title">照片</span>
+				<span class="title">拍照</span>
 			</view>
 			<view class="o-item">
 				<image src="../../static/images/chatroom/position.png" mode=""></image>
-				<span class="title">照片</span>
+				<span class="title">定位</span>
 			</view>
 			<view class="o-item">
 				<image src="../../static/images/chatroom/video.png" mode=""></image>
-				<span class="title">照片</span>
+				<span class="title">视频</span>
 			</view>
 			<view class="o-item">
 				<image src="../../static/images/chatroom/file.png" mode=""></image>
-				<span class="title">照片</span>
+				<span class="title">文件</span>
 			</view>
 		</view>
 	</view>
@@ -94,6 +99,8 @@
 
 <script>
 	import emojiView from '@/components/emoji/emoji.vue'
+	
+	const recorderManager = uni.getRecorderManager();
 	export default {
 		name:"chat-btm",
 		data() {
@@ -104,6 +111,8 @@
 				isShowOptionAdd:false,
 				animationOption: {},
 				inptValue:'',
+				timer:null,
+				isRecording:false,
 				modeImg: '../../static/images/chatroom/yy.png'
 			};
 		},
@@ -116,12 +125,24 @@
 			}
 		},
 		mounted(){
+			// let self = this;
 			this.$nextTick(()=>{
 				this.getElementStyle()
 			})
+			// recorderManager.onStart(function(){
+			// 	console.log(123);
+			// 	if(!self.isRecording){
+			// 		recorderManager.stop()
+			// 	}
+			// })
+			// recorderManager.onStop(function(res){
+			// 	console.log('recorder stop' + JSON.stringify(res));
+			// })
 		},
 		methods:{
 			triggerMode(){
+				this.isShowOption = false
+				this.isShowOptionAdd = false
 				if(this.isKeyboard){
 					this.isKeyboard = false
 					this.modeImg = '../../static/images/chatroom/voice.png'
@@ -149,12 +170,12 @@
 				})
 				// this.animationOption = animationOption.export()
 			},
-			getElementStyle(bool){
+			getElementStyle(pad = 20){
 				const query = uni.createSelectorQuery().in(this)
 				query.select('.chat-btm').boundingClientRect(data=>{
 					// this.clientHeight = data.height
 					// console.log(data.height);
-					this.$emit('handleHeight',data.height+20)
+					this.$emit('handleHeight',data.height+pad)
 				}).exec()
 			},
 			inptArea(e){
@@ -189,6 +210,9 @@
 					this.isShowOption = false
 				}
 				this.isShowOptionAdd = !this.isShowOptionAdd
+				this.$nextTick(()=>{
+					this.getElementStyle()
+				})
 			},
 			// send
 			send(label){
@@ -205,12 +229,7 @@
 						imgList.forEach(img=>{
 							this.handlMsg(img,1)
 						})
-						const query = uni.createSelectorQuery().in(this)
-						query.select('.chat-btm').boundingClientRect(data=>{
-							// this.clientHeight = data.height
-							console.log(data.height);
-							this.$emit('handleHeight',data.height+150)
-						}).exec()
+						this.getElementStyle()
 					}
 				});
 			},
@@ -220,6 +239,28 @@
 					types
 				}
 				this.$emit('inptArea',data)
+			},
+			touchstart(){
+				let reckonTime = 0
+				console.log('touchstart');
+				this.timer = setInterval(()=>{
+					reckonTime++
+					console.log(reckonTime);
+				},1000)
+				recorderManager.start();
+				recorderManager.onStart(function(){
+					console.log(123);
+					// if(!self.isRecording){
+					// 	recorderManager.stop()
+					// }
+				})
+			},
+			touchmove(){
+				console.log('touchmove');
+			},
+			touchend(){
+				clearInterval(this.timer)
+				// recorderManager.stop();
 			}
 		}
 	}
@@ -255,11 +296,21 @@
 					color: rgba(39,40,50,.6);
 					.scroll-v{
 						max-height: 210rpx;	
+						.area-btm{
+							width: 100%;
+							line-height: 38rpx;
+						}
 					}
 					.txt-center{
 						text-align: center;
-						line-height: 42rpx;
+						line-height: 38rpx;
 					}
+					/* #ifdef  MP-WEIXIN */
+					.txt-center{
+						text-align: center;
+						line-height: 30rpx;
+					}
+					/* #endif */
 				}
 				
 				.inptStyle{
