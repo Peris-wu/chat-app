@@ -8,7 +8,7 @@
 		<view class="top-bar-middle" v-if="headerMiddle">
 			<slot name="middle">
 				<view class="middle-wrap">
-					<image src="../../static/images/index/火@3x.png"></image>
+					<image src="../../static/images/index/fire.png"></image>
 				</view>
 			</slot>
 		</view>
