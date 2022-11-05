@@ -57,6 +57,7 @@
 								:class="{'voice-reverse': msgItem.id === 'a'?false:true}"
 								v-if="msgItem.types === 2"
 								:style="{width:`${calWidth(msgItem.message.time)}px`}"
+								@tap="playAudio(msgItem)"
 							>
 								<image src="../../static/images/chatroom/voice-input.png" mode="aspectFill"></image>
 								<span>
@@ -81,6 +82,8 @@
 	import chatHeader from '@/components/chat-header/chat-header.vue'
 	import data from '@/mock/datas/index.js'
 	import chatBtm from '@/components/chat-btm/chat-btm.vue'
+	
+	const innerAudioContext = uni.createInnerAudioContext();
 	export default {
 		data() {
 			return {
@@ -251,6 +254,12 @@
 				this.msgs.push(data)
 				this.scrollIntoV = ''
 				this.scrollToBottom()
+			},
+			playAudio(msgItem){
+				console.log('我被执行了');
+				innerAudioContext.src = msgItem.message.voice
+				console.log(msgItem.message.voice);
+				innerAudioContext.play()
 			}
 		},
 		mounted(){
@@ -264,7 +273,7 @@
 	height: 100vh;
 	background-color: #F4F4F4;
 	overflow: hidden;
-	// overflow-y: hidden;
+	// overflow-y: hidden
 	// padding-bottom: 120rpx;
 	.header{
 		padding-top: 50rpx;
