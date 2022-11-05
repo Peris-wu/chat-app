@@ -101,6 +101,11 @@
 	import emojiView from '@/components/emoji/emoji.vue'
 	
 	const recorderManager = uni.getRecorderManager();
+	// recorderManager.onStart(()=>{
+	// 	console.log('onStart')
+	// 	console.log('我被触发了');
+	// })
+	console.log('onStart 11')
 	export default {
 		name:"chat-btm",
 		data() {
@@ -112,7 +117,7 @@
 				animationOption: {},
 				inptValue:'',
 				timer:null,
-				isRecording:false,
+				timeRecode:0,
 				modeImg: '../../static/images/chatroom/yy.png'
 			};
 		},
@@ -150,6 +155,9 @@
 					this.isKeyboard = true
 					this.modeImg = '../../static/images/chatroom/yy.png'
 				}
+				this.$nextTick(()=>{
+					this.getElementStyle()
+				})
 			},
 			showOption(){
 				// const animationOption = uni.createAnimation({
@@ -241,26 +249,31 @@
 				this.$emit('inptArea',data)
 			},
 			touchstart(){
-				let reckonTime = 0
 				console.log('touchstart');
 				this.timer = setInterval(()=>{
-					reckonTime++
-					console.log(reckonTime);
+					this.timeRecode++
 				},1000)
 				recorderManager.start();
-				recorderManager.onStart(function(){
-					console.log(123);
-					// if(!self.isRecording){
-					// 	recorderManager.stop()
-					// }
-				})
+				// recorderManager.onStart(()=>{
+				
+				// })
 			},
 			touchmove(){
 				console.log('touchmove');
 			},
 			touchend(){
 				clearInterval(this.timer)
-				// recorderManager.stop();
+				
+				recorderManager.stop();
+				recorderManager.onStop((res)=>{
+					console.log('recorder stop' + JSON.stringify(res));
+					const message = {
+						voice: res.tempFilePath,
+						time: this.timeRecode
+					}
+					this.handlMsg(message,2)
+					this.timeRecode = 0
+				})
 			}
 		}
 	}
