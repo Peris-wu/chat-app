@@ -83,14 +83,13 @@
 	import data from '@/mock/datas/index.js'
 	import chatBtm from '@/components/chat-btm/chat-btm.vue'
 	
-	const innerAudioContext = uni.createInnerAudioContext();
 	export default {
 		data() {
 			return {
 				msgs:[],
 				picUrls:[],
 				scrollIntoV:'',
-				padBottom:'51',
+				padBottom:0,
 				initPad:false,
 				initTime:0,
 				referenceTime: new Date()
@@ -223,7 +222,6 @@
 				}
 			},
 			handleHeight(height){
-				console.log(height);
 				this.padBottom = height
 				// 同一个scrollIntoV 无法进行过渡 需要重置scrollIntoV 
 				this.scrollIntoV  = ''
@@ -256,10 +254,14 @@
 				this.scrollToBottom()
 			},
 			playAudio(msgItem){
-				console.log('我被执行了');
+				const innerAudioContext = uni.createInnerAudioContext();
+				innerAudioContext.autoplay = true;
 				innerAudioContext.src = msgItem.message.voice
-				console.log(msgItem.message.voice);
-				innerAudioContext.play()
+				// innerAudioContext.src = '../../static/voice/333.mp3'
+				console.log(msgItem.message.voice)
+				innerAudioContext.onPlay(() => {
+				  console.log('开始播放');
+				});
 			}
 		},
 		mounted(){
