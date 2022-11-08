@@ -1,5 +1,13 @@
 <template>
 	<view class="chat-btm">
+		<view class="mask" v-show="isShowMask" :style="{height:`${maskHeight}px`}">
+			<view class="time-wrap">
+				<view class="time" :style="{width:`${handlTime()>100?100:handlTime()}%`}">
+					{{timeRecode}}"
+				</view>
+			</view>
+			<view class="cancel-text">上滑取消录音</view>
+		</view>
 		<view class="main">
 			<!-- 键盘输入 -->
 			<view class="left">
@@ -25,6 +33,7 @@
 						v-show="!isKeyboard" 
 						@touchstart="touchstart"
 						@touchend="touchend"
+						@touchmove="touchmove"
 					>
 						按住说话
 					</view>
@@ -99,18 +108,18 @@
 
 <script>
 	import emojiView from '@/components/emoji/emoji.vue'
-	
-	const recorderManager = uni.getRecorderManager();
-	// recorderManager.onStart(()=>{
-	// 	console.log('onStart')
-	// 	console.log('我被触发了');
-	// })
+	const recorderManager = uni.getRecorderManager()
 	console.log('onStart 11')
 	export default {
 		name:"chat-btm",
 		data() {
 			return {
-				areaHeight:0,
+				maskHeight:0,
+				isShowMask:false,
+				dynamicWidth:0,
+				clickPostion:{
+					pageY:0
+				},
 				isKeyboard: true,
 				isShowOption: false,
 				isShowOptionAdd:false,
@@ -145,6 +154,18 @@
 			// })
 		},
 		methods:{
+			handlTime(){
+				return this.timeRecode / 60 * 100 
+			},
+			start(e){
+				console.log(`start${e}`);
+			},
+			end(e){
+				console.log(`end${e}`);
+			},
+			stop(){
+				console.log(`stop${e}`);
+			},
 			triggerMode(){
 				this.isShowOption = false
 				this.isShowOptionAdd = false
@@ -182,7 +203,8 @@
 				const query = uni.createSelectorQuery().in(this)
 				query.select('.chat-btm').boundingClientRect(data=>{
 					// this.clientHeight = data.height
-					// console.log(data.height);
+					console.log(data);
+					this.maskHeight = data.bottom - data.height
 					this.$emit('handleHeight',data.height+pad)
 				}).exec()
 			},
@@ -248,31 +270,37 @@
 				}
 				this.$emit('inptArea',data)
 			},
-			touchstart(){
-				console.log('touchstart');
+			touchstart(e){
+				this.clickPostion.pageY = e.changedTouches[0].pageY
+				this.isShowMask = true
 				this.timer = setInterval(()=>{
 					this.timeRecode++
+					if(this.timeRecode>=60){
+						clearInterval(this.timer)
+					}
 				},1000)
-				recorderManager.start();
-				// recorderManager.onStart(()=>{
-				
-				// })
+				recorderManager.start()
 			},
-			touchmove(){
+			touchmove(e){
 				console.log('touchmove');
+				if(this.clickPostion.pageY - e.changedTouches[0].pageY > 100){
+					this.isShowMask = false
+				}
 			},
 			touchend(){
 				clearInterval(this.timer)
-				
 				recorderManager.stop();
 				recorderManager.onStop((res)=>{
-					console.log('recorder stop' + JSON.stringify(res));
+					// console.log('recorder stop' + JSON.stringify(res));
 					const message = {
 						voice: res.tempFilePath,
 						time: this.timeRecode
 					}
-					this.handlMsg(message,2)
+					if(this.isShowMask){
+						this.handlMsg(message,2)
+					}
 					this.timeRecode = 0
+					this.isShowMask = false
 				})
 			}
 		}
@@ -280,6 +308,40 @@
 </script>
 
 <style scoped lang="scss">
+	// 遮罩
+	.mask{
+		position: fixed;
+		width: 100%;
+		left: 0;
+		top:0;
+		background-color: rgba(0,0,0,0.5);
+		.time-wrap{
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			transform: translate(-50%,-50%);
+			width: 80%;
+			height: 80rpx;
+			text-align: center;
+			border-radius: 40rpx;
+			background-color: rgba(255,255,255,0.5);
+			.time{
+				display: inline-block;
+				height: 80rpx;
+				line-height: 80rpx;
+				background-color: #FFE431;
+				border-radius: 40rpx;
+			}
+		}
+		.cancel-text{
+			position: absolute;
+			left: 50%;
+			bottom: 0rpx;
+			transform: translate(-50%,-50%);
+			color: rgba(255,255,255,0.8);
+		}
+	}
+	
 	.chat-btm{
 		background-color: #F4F4F4;
 		box-shadow: rgba(0,0,0,.1) 0 -1rpx 0 0;
