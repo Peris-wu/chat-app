@@ -91,7 +91,7 @@
 				<span class="title">拍照</span>
 			</view>
 			<view class="o-item">
-				<image src="../../static/images/chatroom/position.png" mode=""></image>
+				<image @tap="location" src="../../static/images/chatroom/position.png" mode=""></image>
 				<span class="title">定位</span>
 			</view>
 			<view class="o-item">
@@ -109,7 +109,6 @@
 <script>
 	import emojiView from '@/components/emoji/emoji.vue'
 	const recorderManager = uni.getRecorderManager()
-	console.log('onStart 11')
 	export default {
 		name:"chat-btm",
 		data() {
@@ -143,15 +142,6 @@
 			this.$nextTick(()=>{
 				this.getElementStyle()
 			})
-			// recorderManager.onStart(function(){
-			// 	console.log(123);
-			// 	if(!self.isRecording){
-			// 		recorderManager.stop()
-			// 	}
-			// })
-			// recorderManager.onStop(function(res){
-			// 	console.log('recorder stop' + JSON.stringify(res));
-			// })
 		},
 		methods:{
 			handlTime(){
@@ -203,7 +193,6 @@
 				const query = uni.createSelectorQuery().in(this)
 				query.select('.chat-btm').boundingClientRect(data=>{
 					// this.clientHeight = data.height
-					console.log(data);
 					this.maskHeight = data.bottom - data.height
 					this.$emit('handleHeight',data.height+pad)
 				}).exec()
@@ -301,6 +290,33 @@
 					}
 					this.timeRecode = 0
 					this.isShowMask = false
+				})
+			},
+			location(){
+				uni.getLocation({
+					type: 'gcj02',
+					isHighAccuracy:true,
+					success:  (res)=>{
+						console.log('当前位置的经度：' + res.longitude);
+						console.log('当前位置的纬度：' + res.latitude);
+						uni.chooseLocation({
+							latitude: res.latitude,
+							longitude: res.longitude,
+							success:  (res)=>{
+								// console.log('位置名称：' + res.name);
+								// console.log('详细地址：' + res.address);
+								// console.log('纬度：' + res.latitude);
+								// console.log('经度：' + res.longitude);
+								const data = {
+									name: res.name,
+									address: res.address,
+									latitude: res.latitude,
+									longitude: res.longitude
+								}
+								this.handlMsg(data,3)
+							}
+						});
+					}
 				})
 			}
 		}
