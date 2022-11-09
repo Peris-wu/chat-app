@@ -41,10 +41,12 @@
 							<image class="icon-style" :src="require(`../../static/images/template/${msgItem.imgUrl}`)" />
 						</view>
 						<view class="msg-common msg">
+							<!-- 文本类型信息 -->
 							<view v-if="msgItem.types === 0" class="world-break">
 								{{msgItem.message}}
 							</view>
 							<!-- :src="require(`../../static/images/template/${msgItem.message}`)" -->
+							<!-- 图片类型信息 -->
 							<image 
 								v-if="msgItem.types === 1"
 								class="msg-img"
@@ -52,6 +54,7 @@
 								mode="widthFix"
 								@tap="previewImage(msgItem)"
 							></image>
+							<!-- 语音类型信息 -->
 							<view 
 								class="voice" 
 								:class="{'voice-reverse': msgItem.id === 'a'?false:true}"
@@ -64,7 +67,23 @@
 									{{msgItem.message.time}}
 									<span>"</span>
 								</span>
-								
+							</view>
+							<!-- 地图类型信息 -->
+							<view class="map-wrap" v-if="msgItem.types === 3">
+								<view class="name text-overflow">
+									{{msgItem.message.name}}
+								</view>
+								<view class="address text-overflow">
+									{{msgItem.message.address}}
+								</view>
+								<view class="map-show">
+									<map 
+										class="map" 
+										:latitude="msgItem.message.latitude" 
+										:longitude="msgItem.message.longitude"
+										:markers="handlCover(msgItem)"
+									></map>
+								</view>
 							</view>
 						</view>
 					</view>
@@ -262,6 +281,18 @@
 				innerAudioContext.onPlay(() => {
 				  console.log('开始播放');
 				});
+			},
+			handlCover(item){
+				const cover = [
+					{
+						latitude: item.message.latitude,
+						longitude: item.message.longitude,
+						iconPath: '../../static/images/chatroom/location.png',
+						width: 20,
+						height: 20
+					}
+				]
+				return cover
 			}
 		},
 		mounted(){
@@ -361,6 +392,28 @@
 						flex-direction: row-reverse;
 						image{
 							transform: rotate(360deg);
+						}
+					}
+					.map-wrap{
+						.text-overflow{
+							display: -webkit-box;
+							overflow: hidden;
+							text-overflow: ellipsis;
+							-webkit-box-orient: vertical;
+							-webkit-line-clamp: 1;
+						}
+						.name{
+							padding: 0 20rpx;
+						}
+						.address{
+							
+						}
+						.map-show{
+							overflow: hidden;
+							.map{
+								width: 100%;
+								height: 350rpx;
+							}
 						}
 					}
 				}
