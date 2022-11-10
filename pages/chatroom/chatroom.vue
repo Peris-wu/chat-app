@@ -76,13 +76,14 @@
 								<view class="address text-overflow">
 									{{msgItem.message.address}}
 								</view>
-								<view class="map-show">
-									<map 
+								<view class="map-show" @tap="showLocation(msgItem)">
+									<!-- <map
 										class="map" 
 										:latitude="msgItem.message.latitude" 
 										:longitude="msgItem.message.longitude"
 										:markers="handlCover(msgItem)"
-									></map>
+									></map> -->
+									
 								</view>
 							</view>
 						</view>
@@ -101,7 +102,6 @@
 	import chatHeader from '@/components/chat-header/chat-header.vue'
 	import data from '@/mock/datas/index.js'
 	import chatBtm from '@/components/chat-btm/chat-btm.vue'
-	
 	export default {
 		data() {
 			return {
@@ -293,6 +293,17 @@
 					}
 				]
 				return cover
+			},
+			showLocation(msgItem){
+				uni.openLocation({
+					latitude: msgItem.message.latitude,
+					longitude: msgItem.message.longitude,
+					name: msgItem.message.name,
+					address: msgItem.message.address,
+					success: function () {
+						console.log('success');
+					}
+				});
 			}
 		},
 		mounted(){
@@ -395,6 +406,7 @@
 						}
 					}
 					.map-wrap{
+						
 						.text-overflow{
 							display: -webkit-box;
 							overflow: hidden;
@@ -403,16 +415,20 @@
 							-webkit-line-clamp: 1;
 						}
 						.name{
-							padding: 0 20rpx;
+							padding: 18rpx 24rpx 0 24rpx;
 						}
 						.address{
-							
+							padding: 0 24rpx;
 						}
 						.map-show{
+							padding-top: 8rpx;
 							overflow: hidden;
+							background-color: #eee;
+							width: 100%;
+							height: 250rpx;
 							.map{
 								width: 100%;
-								height: 350rpx;
+								height: 250rpx;
 							}
 						}
 					}
