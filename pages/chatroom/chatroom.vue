@@ -30,6 +30,9 @@
 			:scroll-into-view="scrollIntoV"
 			:scroll-anchoring="true"
 			>
+			 <view class="loading-wrap">
+				 <image :animation="animationLoading" src="../../static/images/chatroom/loading.png" mode="aspectFill"></image>
+			 </view>
 				<view :id="`msg${msgItem.tip}`" class="user-commom" :class="msgItem.id === 'b'? 'myself-right':'user-left'"  v-for="(msgItem,index) in msgs" :key="index">
 					<view class="msg-time" v-show="msgItem.time">
 						{{msgItem.time | timerFilter}}
@@ -108,6 +111,8 @@
 				msgs:[],
 				picUrls:[],
 				scrollIntoV:'',
+				animationLoading:{},
+				loadingTimer:null,
 				padBottom:0,
 				initPad:false,
 				initTime:0,
@@ -191,6 +196,19 @@
 			chatBtm
 		},
 		methods: {
+			// loading
+			 handleLoading(){
+				 const animationLoading = uni.createAnimation({
+				   duration: 1000,
+				   timingFunction: "ease",
+				 })
+				 let i = 0
+				 this.loadingTimer = setInterval(()=>{
+					 animationLoading.rotate(30*i).step()
+					 this.animationLoading = animationLoading.export()
+					 i++
+				 }, 200)
+			 },
 			// 计算语音宽度
 			calWidth(width){
 				// 480是消息最宽像素 60秒暂定为最长语音
@@ -308,11 +326,28 @@
 		},
 		mounted(){
 			this.getMessageList()
+			this.handleLoading()
 		}
 	}
 </script>
 
 <style scoped lang="scss">
+	
+// @-webkit-keyframes rotateVbtn {
+// 	  0% {
+// 	  -webkit-transform:rotate(0);
+// 	  -moz-transform:rotate(0);
+// 	  -ms-transform:rotate(0);
+// 	  -o-transform:rotate(0);
+// 	  transform:rotate(0)
+// 	}
+// 	100% {
+// 	  -webkit-transform:rotate(360deg);
+// 	  -moz-transform:rotate(360deg);
+// 	  -ms-transform:rotate(360deg);
+// 	  -o-transform:rotate(360deg);
+// 	  transform:rotate(360deg)}
+// }
 .chat-room{
 	height: 100vh;
 	background-color: #F4F4F4;
@@ -350,6 +385,16 @@
 		padding: 8rpx 32rpx 0 32rpx;
 		// margin-bottom: var(--status-bar-height);
 		// padding-bottom: 200rpx;
+		.loading-wrap{
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			image{
+				width: 60rpx;
+				height: 60rpx;
+				// animation:rotateVbtn 5s linear infinite;
+			}
+		}
 		.msg-common{
 			max-width: 480rpx;
 			padding: 16rpx 24rpx;
