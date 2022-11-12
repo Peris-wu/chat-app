@@ -24,13 +24,13 @@
 		<view class="chat-main">
 			<scroll-view 
 			:scroll-y="true" 
-			:scroll-with-animation="true" 
 			style="height: 100%;"
 			:show-scrollbar="false"
 			:scroll-into-view="scrollIntoV"
 			:scroll-anchoring="true"
+			@scrolltoupper="setTop"
 			>
-			 <view class="loading-wrap">
+			 <view class="loading-wrap" v-show="isShowLoading">
 				 <image :animation="animationLoading" src="../../static/images/chatroom/loading.png" mode="aspectFill"></image>
 			 </view>
 				<view :id="`msg${msgItem.tip}`" class="user-commom" :class="msgItem.id === 'b'? 'myself-right':'user-left'"  v-for="(msgItem,index) in msgs" :key="index">
@@ -113,9 +113,11 @@
 				scrollIntoV:'',
 				animationLoading:{},
 				loadingTimer:null,
+				isShowLoading: false,
 				padBottom:0,
 				initPad:false,
 				initTime:0,
+				page:0,
 				referenceTime: new Date()
 			}
 		},
@@ -196,18 +198,28 @@
 			chatBtm
 		},
 		methods: {
+			// 上拉加载历史消息
+			async setTop(){
+				
+				this.isShowLoading = true
+				++this.page
+				await setTimeout(()=>{
+					this.isShowLoading = false
+				},2000)
+				this.getMessageList(this.page)
+			},
 			// loading
 			 handleLoading(){
 				 const animationLoading = uni.createAnimation({
 				   duration: 1000,
-				   timingFunction: "ease",
+				   timingFunction: "step-start",
 				 })
 				 let i = 0
 				 this.loadingTimer = setInterval(()=>{
 					 animationLoading.rotate(30*i).step()
 					 this.animationLoading = animationLoading.export()
 					 i++
-				 }, 200)
+				 }, 150)
 			 },
 			// 计算语音宽度
 			calWidth(width){
@@ -225,22 +237,41 @@
 					loop:true
 				})
 			},
-			getMessageList(){
+			getMessageList(page = 0){
 				const msgs = data.message()
-				msgs.forEach(msg=>{
-					// msg.imgUrl = `../../static/images/template/${msg.imgUrl}`
-					if(msg.types === 1){
-						this.picUrls.unshift(`../../static/images/template/${msg.message}`)
-						msg.message = `../../static/images/template/${msg.message}`
+				let msgsLen = msgs.length
+				let distance = msgs.length - page * 10
+				if(distance >= 10){
+					for(let i = 10 * page; i < (page+1) * 10; i++){
+						if(msgs[i].types === 1){
+							this.picUrls.unshift(`../../static/images/template/${msgs[i].message}`)
+							msgs[i].message = `../../static/images/template/${msgs[i].message}`
+						}
+						const time = this.spaceTime(this.referenceTime,msgs[i].time)
+						if(time){
+							this.referenceTime = time
+						}
+						msgs[i].time = time
+						this.msgs.unshift(msgs[i])
 					}
-					const time = this.spaceTime(this.referenceTime,msg.time)
-					if(time){
-						this.referenceTime = time
+				}else{
+					for(let i = 10 * page; i < (page) * 10 + distance; i++){
+						if(msgs[i].types === 1){
+							this.picUrls.unshift(`../../static/images/template/${msgs[i].message}`)
+							msgs[i].message = `../../static/images/template/${msgs[i].message}`
+						}
+						const time = this.spaceTime(this.referenceTime,msgs[i].time)
+						if(time){
+							this.referenceTime = time
+						}
+						msgs[i].time = time
+						this.msgs.unshift(msgs[i])
 					}
-					msg.time = time
-					this.msgs.unshift(msg)
+				}
+				this.$nextTick(()=>{
+					const len = this.msgs.length
+					this.scrollIntoV = `msg${this.msgs[len-this.page * 10 - 1]?.tip}`
 				})
-				this.scrollToBottom()
 			},
 			scrollToBottom(){
 				this.$nextTick(()=>{
