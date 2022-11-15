@@ -86,7 +86,7 @@
 										:longitude="msgItem.message.longitude"
 										:markers="handlCover(msgItem)"
 									></map> -->
-									
+									<image class="map" src="../../static/images/chatroom/map.png" mode="aspectFill"></image>
 								</view>
 							</view>
 						</view>
@@ -200,13 +200,14 @@
 		methods: {
 			// 上拉加载历史消息
 			async setTop(){
-				
-				this.isShowLoading = true
-				++this.page
-				await setTimeout(()=>{
-					this.isShowLoading = false
-				},2000)
-				this.getMessageList(this.page)
+				if(!this.isShowLoading){
+					this.isShowLoading = true
+					++this.page
+					await setTimeout(()=>{
+						this.getMessageList(this.page)
+						this.isShowLoading = false
+					},2000)
+				}
 			},
 			// loading
 			 handleLoading(){
@@ -238,9 +239,11 @@
 				})
 			},
 			getMessageList(page = 0){
+				console.log(page);
 				const msgs = data.message()
 				let msgsLen = msgs.length
 				let distance = msgs.length - page * 10
+
 				if(distance >= 10){
 					for(let i = 10 * page; i < (page+1) * 10; i++){
 						if(msgs[i].types === 1){

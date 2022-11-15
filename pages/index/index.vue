@@ -2,7 +2,14 @@
 	<view class="content">
 		<chat-header>
 			<!-- <template v-slot:left></template> -->
-			<!-- <template v-slot:middle></template> -->
+			<template v-slot:right>
+				<image class="img-search-add" src="../../static/images/index/search@3x.png"></image>
+				<image 
+					class="img-search-add" 
+					src="../../static/images/index/add group@3x.png"
+					@tap="createChatGroup"
+				></image>
+			</template>
 		</chat-header>
 		
 		<view class="friends-application">
@@ -101,6 +108,12 @@
 				uni.navigateTo({
 					url:'/pages/userhome/userhome'
 				})
+			},
+			// 创建群聊
+			createChatGroup(){
+				uni.navigateTo({
+					url:'/pages/createchatgroup/createchatgroup'
+				})
 			}
 		},
 		components:{
@@ -115,6 +128,11 @@
 			width: 100%;
 			height: 100%;
 		}
+		.img-search-add{
+			width: 52rpx;
+			height: 52rpx;
+		}
+		
 		.search{
 			text-align: left;
 			background-color: $uni-bg-color-grey;
