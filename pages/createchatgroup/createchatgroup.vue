@@ -14,7 +14,7 @@
 			</chat-header>
 		</view>
 		<view class="main">
-			<view class="icon-name">
+			<view class="icon-name-title">
 				<view class="group-icon">
 					<!-- <image src="../../static/images/createchatgroup/group.png"></image> -->
 					<view class="group-icon-bg">
@@ -30,9 +30,9 @@
 				<view class="group-name">
 					<input type="text" placeholder="群名称群名称" /> 
 				</view>
-			</view>
-			<view class="title-user-list">
 				<view class="title">用户</view>
+			</view>
+			<view class="user-list-wrap" :style="{height:`${calcH}px`}">
 				<view class="user-list">
 					<checkbox-group>
 						<label class="list-item" v-for="item in items" :key="item.value">
@@ -68,12 +68,21 @@
 		data() {
 			return {
 				defaultAvatar:'../../static/images/createchatgroup/group.png',
+				sumH:0,
+				headerH:0,
+				iconInptH:0,
+				btmH:0,
 				items: [{
 						value: 'USA',
 						name: '美国'
 					},
 					{
 						value: 'CHN',
+						name: '中国',
+						checked: 'true'
+					},
+					{
+						value: 'CHNN',
 						name: '中国',
 						checked: 'true'
 					}
@@ -84,18 +93,57 @@
 			chatHeader,
 			yqAvatar
 		},
+		computed:{
+			calcH(){
+				const result = this.sumH - this.headerH - this.iconInptH - this.btmH
+				console.log(this.sumH);
+				console.log(this.headerH);
+				console.log(this.iconInptH );
+				console.log(this.btmH);
+				console.log(result);
+				return result
+			}
+		},
 		methods: {
 			// 修改群头像
 			changeGroupIcon(iconPath){
-				console.log(iconPath.path);
 				this.defaultAvatar = iconPath.path
+			},
+			getElementStyle(){
+				const query = uni.createSelectorQuery().in(this)
+				query.select('.header').boundingClientRect(data=>{
+					// this.clientHeight = data.height
+					// sumH:0,
+					// headerH:0,
+					// iconInptH:0,
+					// btmH:0,
+					this.headerH = data.height
+				})
+				query.select('.icon-name-title').boundingClientRect(data=>{
+					this.iconInptH = data.height
+				})
+				query.select('.chat-group').boundingClientRect(data=>{
+					this.sumH = data.height
+				})
+				query.select('.create-btn-wrap').boundingClientRect(data=>{
+					this.btmH = data.height
+				})
+				query.exec()
 			}
+		},
+		mounted(){
+			this.getElementStyle()
 		}
 	}
 </script>
 
 <style scoped lang="scss">
 .chat-group{
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	left: 0;
+	top: 0;
 	.header{
 		color: #272832;
 		.left-text{
@@ -106,12 +154,12 @@
 		}
 	}
 	.main{
-		.icon-name{
+		.icon-name-title{
 			.group-icon{
 				position: relative;
 				display: flex;
 				justify-content: center;
-				margin: 60rpx 0;
+				padding: 60rpx 0;
 				image{
 					width: 196rpx;
 					height: 196rpx;
@@ -150,17 +198,18 @@
 					text-align: center;
 				}
 			}
-		}
-		.title-user-list{
-			margin-top: 40rpx;
-			padding: 0 32rpx;
 			.title{
+				margin-top: 40rpx;
+				padding: 0 32rpx 20rpx 32rpx;
 				font-size: 44rpx;
 				color: #272832;
 				font-weight: 600;
 			}
+		}
+		.user-list-wrap{
+			padding: 0 32rpx;
 			.user-list{
-				padding-top: 20rpx;
+				// padding-top: 20rpx;
 				.list-item{
 					display: flex;
 					justify-content: flex-start;
@@ -182,7 +231,6 @@
 					}
 					.user-icon{
 						margin: 0 32rpx;
-						
 						image{
 							width: 80rpx;
 							height: 80rpx;
