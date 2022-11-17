@@ -28,34 +28,61 @@
 					<!-- <image src="../../static/images/createchatgroup/change.png" class="icon-pan"></image> -->
 				</view>
 				<view class="group-name">
-					<input type="text" placeholder="群名称群名称" /> 
+					<input type="text" placeholder="群名称群名称" v-model="groupName"/> 
 				</view>
 				<view class="title">用户</view>
 			</view>
-			<view class="user-list-wrap" :style="{height:`${calcH}px`}">
-				<view class="user-list">
-					<checkbox-group>
-						<label class="list-item" v-for="item in items" :key="item.value">
-							<view>
-								<checkbox class="custom-checkbox" :value="item.value" :checked="item.checked" />
+			<view class="user-list-wrap">
+				<view class="user-list" :style="{height:`${calcH}px`}">
+					<scroll-view scroll-y scroll-with-animation enable-flex style="height: 100%;">
+						<!-- <checkbox-group>
+							<label class="list-item" v-for="(item,index) in items" :key="index">
+								<view>
+									<checkbox class="custom-checkbox" :value="item.value" :checked="item.checked" />
+								</view>
+								<view class="user-icon">
+									<image src="../../static/images/template/02.jpg"></image>
+								</view>
+								<view class="user-name">
+									<span>
+										武动乾坤
+									</span>
+								</view>
+							</label>
+						</checkbox-group> -->
+						<view 
+							v-for="(item,index) in items" 
+							:key="index" 
+							class="list-item"
+							@tap="chooseUser(item,index)"
+						>
+							<view class="custom-checkbox" :class="{checked: item.isChoose}">
+								<image 
+									v-if="item.isChoose" 
+									src="../../static/images/createchatgroup/choose.png" 
+									mode="aspectFill"
+								>
+								</image>
 							</view>
 							<view class="user-icon">
-								<image src="../../static/images/template/02.jpg"></image>
+								<image :src="item.imgUrl" mode="aspectFill"></image>
 							</view>
 							<view class="user-name">
-								<span>
-									武动乾坤
-								</span>
+									{{item.name}}
 							</view>
-						</label>
-					</checkbox-group>
+						</view>
+					</scroll-view>
 				</view>
 			</view>
 		</view>
 		<view class="create-btn-wrap">
-			<view class="create-btn">
+			<view 
+				class="default-btn" 
+				:class="{'create-btn':choosedUsers && groupName.trim().length}"
+				@tap="createGroup"
+			>
 				<span>创建</span>
-				<span>()</span>
+				<span>({{choosedUsers}})</span>
 			</view>
 		</view>
 	</view>
@@ -72,20 +99,63 @@
 				headerH:0,
 				iconInptH:0,
 				btmH:0,
-				items: [{
-						value: 'USA',
-						name: '美国'
+				groupName: '',
+				items: [
+					{
+						id:0,
+						isChoose:true,
+						imgUrl: '../../static/images/template/02.jpg',
+						name:'武动乾坤'
 					},
 					{
-						value: 'CHN',
-						name: '中国',
-						checked: 'true'
+						id:1,
+						isChoose:false,
+						imgUrl: '../../static/images/template/02.jpg',
+						name:'斗破苍穹'
 					},
 					{
-						value: 'CHNN',
-						name: '中国',
-						checked: 'true'
+						id:3,
+						isChoose:false,
+						imgUrl: '../../static/images/template/02.jpg',
+						name:'完美世界'
+					},
+					{
+						id:4,
+						isChoose:false,
+						imgUrl: '../../static/images/template/02.jpg',
+						name:'遮天'
+					},
+					{
+						id:5,
+						isChoose:false,
+						imgUrl: '../../static/images/template/02.jpg',
+						name:'凡人修仙传'
+					},
+					{
+						id:6,
+						isChoose:false,
+						imgUrl: '../../static/images/template/02.jpg',
+						name:'仙逆'
+					},
+					{
+						id:7,
+						isChoose:false,
+						imgUrl: '../../static/images/template/02.jpg',
+						name:'圣墟'
+					},
+					{
+						id:8,
+						isChoose:false,
+						imgUrl: '../../static/images/template/02.jpg',
+						name:'大主宰'
+					},
+					{
+						id:9,
+						isChoose:false,
+						imgUrl: '../../static/images/template/02.jpg',
+						name:'斗罗大陆'
 					}
+					
 				]
 			}
 		},
@@ -96,11 +166,13 @@
 		computed:{
 			calcH(){
 				const result = this.sumH - this.headerH - this.iconInptH - this.btmH
-				console.log(this.sumH);
-				console.log(this.headerH);
-				console.log(this.iconInptH );
-				console.log(this.btmH);
-				console.log(result);
+				return result
+			},
+			choosedUsers(){
+				let result = 0
+				this.items.forEach(item=>{
+					if(item.isChoose) result++
+				})
 				return result
 			}
 		},
@@ -129,6 +201,14 @@
 					this.btmH = data.height
 				})
 				query.exec()
+			},
+			// 选择添加好友进群
+			chooseUser(item,index){
+				this.items[index].isChoose = !this.items[index].isChoose
+			},
+			createGroup(){
+				if(!this.choosedUsers || !this.groupName.trim().length)return
+				console.log('created success!!');
 			}
 		},
 		mounted(){
@@ -214,22 +294,32 @@
 					display: flex;
 					justify-content: flex-start;
 					align-items: center;
-					height: 80rpx;
+					// max-height: 100rpx;
+					height: 80;
 					margin-bottom: 40rpx;
 					.custom-checkbox{
+						position: relative;
 						width: 48rpx;
 						height: 48rpx;
-						background: #FFE431;
+						background: rgba(255,228,49,0.50);
+						// background: #FFE431;
 						border-radius: 24rpx;
-						::v-deep .uni-checkbox-input{
-							width: 48rpx;
-							outline: none;
-							border: none;
-							background-color: transparent;
-							border-radius: 0;
+						image{
+							position: absolute;
+							left: 50%;
+							top: 50%;
+							width: 30rpx;
+							height: 20rpx;
+							transform: translate(-50%,-50%);
 						}
 					}
+					.checked{
+						background: #FFE431;
+					}
 					.user-icon{
+						display: flex;
+						height: 100%;
+						align-items: center;
 						margin: 0 32rpx;
 						image{
 							width: 80rpx;
@@ -254,16 +344,19 @@
 		box-sizing: border-box;
 		padding: 0 32rpx;
 		box-shadow: inset 0px 0.5rpx 0px 0px rgba(0,0,0,0.1);
-		.create-btn{
+		.default-btn{
 			width: 686rpx;
 			height: 80rpx;
 			color: #272832;
 			font-size: 32rpx;
 			margin-top: 12rpx;
-			background-color: #FFE431;
+			background-color: #eee;
 			border-radius: 10rpx;
 			line-height: 80rpx;
 			text-align: center;
+		}
+		.create-btn{
+			background-color: #FFE431;
 		}
 	}
 }
