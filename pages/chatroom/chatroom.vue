@@ -16,7 +16,7 @@
 				
 				<template v-slot:right>
 					<view class="right">
-						<image src="../../static/images/template/05.jpg" mode="aspectFill"></image>
+						<image @tap="toGroupDetail" src="../../static/images/template/05.jpg" mode="aspectFill"></image>
 					</view>
 				</template>
 			</chat-header>
@@ -356,6 +356,12 @@
 						console.log('success');
 					}
 				});
+			},
+			// 进入群详情
+			toGroupDetail(){
+				uni.navigateTo({
+					url:'/pages/groupdetail/groupdetail'
+				})
 			}
 		},
 		mounted(){
