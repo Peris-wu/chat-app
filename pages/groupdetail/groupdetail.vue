@@ -1,7 +1,7 @@
 <template>
 	<view class="group-detail">
 		<view class="bg">
-			<image src="../../static/images/groupdetail/group-detail-bg.jpg" mode="aspectFill"></image>
+			<image :src="imgUrl" mode="aspectFill"></image>
 		</view>
 		<view class="header" :style="{backgroundColor: !triggerPic?'':'#fff'}">
 			<chat-header :isShowShadow="false">
@@ -77,13 +77,13 @@
 					</view>
 				</view>
 				
-				<view class="option-wrap">
+				<view class="option-wrap" @tap="triggerEditor('groupName')">
 					<option-view>
 						<template v-slot:left>
 							群名称
 						</template>
 						<template v-slot:r-text>
-							开心就好
+							{{groupName}}
 						</template>
 					</option-view>
 				</view>
@@ -95,30 +95,38 @@
 						</template>
 						<template v-slot:r-text>
 							<view style="display: flex;height: 100%;width: 100%;align-items: center">
-								<image class="group-img" src="../../static/images/template/02.jpg"></image>
+								<yq-avatar
+									class="group-img"
+									selWidth="200px" 
+									selHeight="400upx" 
+									@upload="myUpload" 
+									:avatarSrc="imgUrl"
+									avatarStyle="width: 80upx; height: 80upx; border-radius: 20upx;"
+								></yq-avatar>
+								<!-- <image class="group-img" src="../../static/images/groupdetail/group-detail-bg.jpg"></image> -->
 							</view>
 						</template>
 					</option-view>
 				</view>
 				
-				<view class="option-wrap">
+				<view class="option-wrap" @tap="triggerEditor('groupNotice')">
 					<option-view>
 						<template v-slot:left>
 							群公告
 						</template>
 						<template v-slot:r-text>
-							特别的爱给特别库，大哭高科啊老哭特别的爱给特别库，大哭高科啊老哭特别的爱给特别库，大哭高科啊老哭
+							{{groupNotice}}
 						</template>
 					</option-view>
 				</view>
 				
-				<view class="option-wrap">
+				<view class="option-wrap" @tap="triggerEditor('groupAliaName')">
 					<option-view>
 						<template v-slot:left>
 							群内名
 						</template>
 						<template v-slot:r-text>
-							高兴就好
+							{{groupAliaName}}
 						</template>
 					</option-view>
 				</view>
@@ -136,27 +144,73 @@
 				</view>
 			</view>
 		</view>
+		<!-- 群名称弹出层 -->
+		<view class="editor-wrap"  :style="{bottom:`${-clientHeight}px`}" :animation="animationGroupName">
+			<editor-info @cancel="cancel('groupName')" @achivement="achivementSignature" :data="groupName">
+				<template v-slot:middle>
+					<view class="middle">
+						修改群名称
+					</view>
+				</template>
+			</editor-info>
+		</view>
+		
+		<!-- 群公告弹出层 -->
+		<view class="editor-wrap"  :style="{bottom:`${-clientHeight}px`}" :animation="animationGroupNotice">
+			<editor-info @cancel="cancel('groupNotice')" @achivement="modifyGroupNotice" :data="groupNotice">
+				<template v-slot:middle>
+					<view class="middle">
+						修改群公告
+					</view>
+				</template>
+			</editor-info>
+		</view>
+		
+		<!-- 群公告弹出层 -->
+		<view class="editor-wrap"  :style="{bottom:`${-clientHeight}px`}" :animation="animationGroupAliaName">
+			<editor-info @cancel="cancel('groupAliaName')" @achivement="modifyGroupAliaName" :data="groupAliaName">
+				<template v-slot:middle>
+					<view class="middle">
+						修改群内名
+					</view>
+				</template>
+			</editor-info>
+		</view>
 	</view>
 </template>
 
 <script>
 	import chatHeader from '@/components/chat-header/chat-header.vue'
 	import optionView from '@/pages/groupdetail/optionview/optionview.vue'
+	import yqAvatar from '../../components/yq-avatar/yq-avatar.vue'
+	import editorInfo from '@/components/editorinfo/editorinfo.vue'
 	export default {
 		data() {
 			return {
 				checked: false,
 				headerH: 0,
 				offsetHeader: 0,
-				triggerPic: false
+				triggerPic: false,
+				imgUrl: '../../static/images/groupdetail/group-detail-bg.jpg',
+				clientHeight: 0,
+				animationGroupName: {},
+				animationGroupNotice: {},
+				animationGroupAliaName:{},
+				isShowSignTure: false,
+				groupName: '开心就好',
+				groupNotice: '怀念逝去的英雄本色,怀念逝去的英雄本色,怀念逝去的英雄本色',
+				groupAliaName: '高兴就好'
 			}
 		},
 		components:{
 			chatHeader,
-			optionView
+			optionView,
+			yqAvatar,
+			editorInfo
 		},
 		mounted(){
 			this.calcHeaderH()
+			this.getElementStyle()
 		},
 		methods: {
 			calcHeaderH(){
@@ -178,6 +232,81 @@
 						this.triggerPic = false
 					}
 				}).exec()
+			},
+			// 修改头像
+			myUpload(data){
+				this.imgUrl = data.path
+			},
+			// 获取盒子高度
+			getElementStyle(){
+				const query = uni.createSelectorQuery().in(this)
+				query.select('.editor-wrap').boundingClientRect(data=>{
+					this.clientHeight = data.height
+				}).exec()
+			},
+			// 弹出层取消
+			cancel(signal){
+				this.triggerEditor(signal)
+			},
+			// 群名称
+			achivementSignature(data){
+				console.log(data);
+				this.groupName = data
+				this.triggerEditor('groupName')
+			},
+			// 群公告
+			modifyGroupNotice(data){
+				this.groupNotice = data
+				this.triggerEditor('groupNotice')
+			},
+			// 群内名
+			modifyGroupAliaName(data){
+				this.groupAliaName = data
+				this.triggerEditor('groupAliaName')
+			},
+			triggerEditor(signal){
+				const animationGroupName = uni.createAnimation({
+				  duration: 300,
+				  timingFunction: "ease",
+				})
+				const animationNotice = uni.createAnimation({
+				  duration: 300,
+				  timingFunction: "ease",
+				})
+				const groupAliaName = uni.createAnimation({
+				  duration: 300,
+				  timingFunction: "ease",
+				})
+				const animationEmail = uni.createAnimation({
+				  duration: 300,
+				  timingFunction: "ease",
+				})
+				this.isShowSignTure = !this.isShowSignTure
+				if(this.isShowSignTure){
+					if(signal==='groupName'){
+						animationGroupName.bottom(0).step()
+					}else if(signal==='groupNotice'){
+						animationNotice.bottom(0).step()
+					}else if(signal==='groupAliaName'){
+						groupAliaName.bottom(0).step()
+					}else if(signal==='email'){
+						animationEmail.bottom(0).step()
+					}
+				}else{
+					if(signal==='groupName'){
+						animationGroupName.bottom(-this.clientHeight).step()
+					}else if(signal==='groupNotice'){
+						animationNotice.bottom(-this.clientHeight).step()
+					}else if(signal==='groupAliaName'){
+						groupAliaName.bottom(-this.clientHeight).step()
+					}else if(signal==='email'){
+						animationEmail.bottom(-this.clientHeight).step()
+					}
+				}
+				this.animationGroupName = animationGroupName.export()
+				this.animationGroupNotice = animationNotice.export()
+				this.animationGroupAliaName = groupAliaName.export()
+				this.animationEmail = animationEmail.export()
 			}
 		},
 		onPageScroll(e){
@@ -376,6 +505,20 @@
 				width: 68rpx;
 				height: 14rpx;
 			}
+		}
+	}
+	.editor-wrap{
+		position: fixed;
+		width: 100%;
+		height: 100%;
+		background-color: #fff;
+		.middle{
+			font-size: 40rpx;
+			color: #272832;
+		}
+		.right{
+			font-size: 32rpx;
+			text-align: right;
 		}
 	}
 }
