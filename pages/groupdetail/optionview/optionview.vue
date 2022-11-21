@@ -46,10 +46,14 @@
 		justify-content: space-between;
 		align-items: center;
 		flex: 1;
+		height: 100%;
 		margin-left: 30rpx;
 		font-size: 32rpx;
 		color: rgba(39,40,50,0.60);
 		.text{
+			// display: flex;
+			// height: 100%;
+			// align-items: center;
 			flex: 1;
 			display: -webkit-box;
 			overflow: hidden;
