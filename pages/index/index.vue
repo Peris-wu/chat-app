@@ -16,7 +16,12 @@
 		</view>
 		
 		<view class="friend-list">
-			<view class="list-item" v-for="item in friends" :key="item.id">
+			<view 
+				class="list-item" 
+				v-for="item in friends" 
+				:key="item.id"
+				@tap="toChatPage"
+			>
 				<view class="left">
 					<view class="tip">{{item.msgNum}}</view>
 					<!-- <image src="../../static/images/index/apply.png"></image> -->
@@ -113,6 +118,12 @@
 			createChatGroup(){
 				uni.navigateTo({
 					url:'/pages/createchatgroup/createchatgroup'
+				})
+			},
+			// 跳转到聊天
+			toChatPage(){
+				uni.navigateTo({
+					url:'/pages/chatroom/chatroom'
 				})
 			}
 		},
