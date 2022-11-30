@@ -9,21 +9,25 @@
 		<view class="register-content">
 			<view class="register-text">注册</view>
 			<view class="content-text">
-				<input @blur="usernameBlur" v-model="username" type="text" placeholder="请输入名字" placeholder-style="color:#808080;fontSize:28rpx"/>
+				<input @blur="usernameBlur" v-model="user" type="text" placeholder="请输入名字" placeholder-style="color:#808080;fontSize:28rpx"/>
 				<image v-if="isInvalidUsername === true" src="../../static/images/register/pass.png"></image>
-				<view v-else-if="isInvalidUsername === false" class="username-error-tip">请填写用户名</view>
+				<view v-else-if="isInvalidUsername === false" class="username-error-tip">{{userErrorTip}}</view>
 			</view>
 			<view class="content-email">
-				<input @blur="emailBlur" v-model="email" type="text" placeholder="请输入邮箱" placeholder-style="color:#808080;fontSize:28rpx"/>
+				<input @blur="emailBlur" v-model="mail" type="text" placeholder="请输入邮箱" placeholder-style="color:#808080;fontSize:28rpx"/>
 				<image v-if="isInvalidEmail === true" src="../../static/images/register/pass.png"></image>
-				<view v-else-if="isInvalidEmail === false" class="email-error-tip">邮箱错误</view>
+				<view v-else-if="isInvalidEmail === false" class="email-error-tip">{{mailErrorTip}}</view>
 			</view>
 			<view class="content-pwd">
 				<input v-if="defaultStatus" v-model="pwd" type="text" placeholder="请输入密码" placeholder-style="color:#808080;fontSize:28rpx"/>
 				<input v-else v-model="pwd" type="password" placeholder="请输入密码" placeholder-style="color:#808080;fontSize:28rpx"/>
 				<image @click="switchoverStatus" :src="isShowPwd"></image>
 			</view>
-			<button class="register-btn" :style="{'backgroundColor':isRegister?'#FFE431':'' ,'color':isRegister?'#000000':''}">注册</button>
+			<button 
+				class="register-btn" 
+				:style="{'backgroundColor':isRegister?'#FFE431':'' ,'color':isRegister?'#000000':''}"
+				@tap="tapRegister"
+			>注册</button>
 		</view>
 	</view>
 </template>
@@ -32,18 +36,20 @@
 	export default {
 		data() {
 			return {
-				username:'',
+				user:'',
 				isInvalidUsername: '11',
-				email:'',
+				mail:'',
 				isInvalidEmail: '11',
 				pwd:'',
 				isInvalidPwd:false,
-				defaultStatus:false
+				defaultStatus:false,
+				userErrorTip:'请填写用户名',
+				mailErrorTip: '邮箱错误'
 			}
 		},
 		computed:{
 			isRegister(){
-				return this.username && this.email && this.pwd
+				return this.user && this.mail && this.pwd && this.isInvalidUsername && this.isInvalidEmail
 			},
 			isShowPwd(){
 				return this.defaultStatus?'../../static/images/register/show-pwd.png':'../../static/images/register/password-not-view.png'
@@ -53,18 +59,72 @@
 			switchoverStatus(){
 				this.defaultStatus = !this.defaultStatus
 			},
+			// 验证 user/mail 是否存在
+			isExist(user,mail=null){
+				uni.request({
+					url:'http://localhost:8082/user/isexist',
+					data:{
+						user,
+						mail
+					},
+					method:'POST',
+					success:data=>{
+						console.log(data);
+						if(user?.length){
+							if(data.data.code === 200){
+								this.userErrorTip = '用户名已存在'
+								this.isInvalidUsername = false
+							}else{
+								this.userErrorTip = '请填写用户名'
+								this.isInvalidUsername = true
+							}
+						}else{
+							if(data.data.code === 200){
+								this.mailErrorTip = '邮箱已存在'
+								this.isInvalidEmail = false
+							}else{
+								this.mailErrorTip = '邮箱错误'
+								this.isInvalidEmail = true
+							}
+						}
+					}
+				})
+			},
 			usernameBlur(){
-				this.username ? this.isInvalidUsername = true : this.isInvalidUsername = false
+				this.user ? this.isInvalidUsername = true : this.isInvalidUsername = false
+				if(this.user){
+					this.isExist(this.user)
+				}
 			},
 			emailBlur(){
 				const reg = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(?:\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+$/
-				let result = reg.test(this.email)
+				let result = reg.test(this.mail)
 				result ? this.isInvalidEmail = true:this.isInvalidEmail = false
+				if(result){
+					this.isExist(null,this.mail)
+				}
 			},
 			toSignIn(){
 				uni.navigateBack({
 					delta:1
 				})
+			},
+			// 注册按钮点击事件
+			tapRegister(){
+				if(this.isRegister){
+					uni.request({
+						url:'http://localhost:8082/user/login',
+						data:{
+							user: this.user,
+							mail: this.mail,
+							pwd: this.pwd
+						},
+						method:'POST',
+						success:data=>{
+							console.log(data);
+						}
+					})
+				}
 			}
 		}
 	}

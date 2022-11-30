@@ -33,7 +33,17 @@
 			},
 			login(){
 				if(this.user && this.pwd){
-					console.log('success login')
+					uni.request({
+						url:'http://localhost:8082/user/login',
+						data:{
+							user: this.user,
+							pwd: this.pwd
+						},
+						method:'POST',
+						success:data=>{
+							console.log(data);
+						}
+					})
 					return 
 				}
 				uni.showToast({
