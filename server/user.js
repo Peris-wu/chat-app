@@ -5,7 +5,9 @@ const userController = require('../controller/user')
 const isAccountExist = async (user, mail) => {
   try {
     const result = await userController.orWhereUser(user, mail)
-    result.length >= 1 ? true : false
+    let isExist = false
+    result.length >= 1 ? (isExist = true) : (isExist = false)
+    return isExist
   } catch (err) {
     console.log(err)
   }

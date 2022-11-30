@@ -11,14 +11,15 @@ const userServer = require('../server/user')
 200->成功
 201->失败 
 */
-
-router.post('/login', (req, res, next) => {
-  const { user, mail } = req.body
+// 查询用户是否存在
+router.post('/isexist', async (req, res, next) => {
+  const { user = null, mail = null } = req.body
   const feedbackMsg = {
     code: 201,
     msg: 'fail'
   }
-  const result = userServer.isAccountExist(user, mail)
+  const result = await userServer.isAccountExist(user, mail)
+  console.log(result)
   if (result) {
     feedbackMsg.code = 200
     feedbackMsg.msg = 'success'
