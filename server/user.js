@@ -10,6 +10,7 @@ const isAccountExist = async (user, mail) => {
     return isExist
   } catch (err) {
     console.log(err)
+    //
   }
 }
 exports.isAccountExist = isAccountExist
