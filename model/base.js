@@ -12,6 +12,10 @@ class Base {
       this.where('user', user).orWhere('mail', mail)
     })
   }
+  insert = (params) => {
+    console.log(params)
+    return knex(this.tableName).insert(params)
+  }
 }
 
 module.exports = Base

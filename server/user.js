@@ -14,3 +14,19 @@ const isAccountExist = async (user, mail) => {
   }
 }
 exports.isAccountExist = isAccountExist
+
+// 注册user/mail
+const insertAccount = async (user, mail, pwd) => {
+  try {
+    const params = {
+      user,
+      mail,
+      pwd
+    }
+    const result = await userController.insertUser(params)
+    return result
+  } catch (err) {
+    console.log(err)
+  }
+}
+exports.insertAccount = insertAccount
