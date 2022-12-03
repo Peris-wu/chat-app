@@ -37,9 +37,9 @@
 		data() {
 			return {
 				user:'',
-				isInvalidUsername: '11',
+				isInvalidUsername: undefined,
 				mail:'',
-				isInvalidEmail: '11',
+				isInvalidEmail: undefined,
 				pwd:'',
 				isInvalidPwd:false,
 				defaultStatus:false,
@@ -53,6 +53,18 @@
 			},
 			isShowPwd(){
 				return this.defaultStatus?'../../static/images/register/show-pwd.png':'../../static/images/register/password-not-view.png'
+			}
+		},
+		watch:{
+			user:{
+				handler(newVal,oldVal){
+					this.isExist(newVal)
+				}
+			},
+			mail:{
+				handler(newVal,oldVal){
+					this.isExist(newVal)
+				}
 			}
 		},
 		methods: {
@@ -97,6 +109,11 @@
 				}
 			},
 			emailBlur(){
+				if(this.mail.length === 0){
+					this.mailErrorTip = '请填写邮箱'
+					this.isInvalidEmail = false
+					return
+				}
 				const reg = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(?:\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+$/
 				let result = reg.test(this.mail)
 				result ? this.isInvalidEmail = true:this.isInvalidEmail = false
@@ -105,23 +122,37 @@
 				}
 			},
 			toSignIn(){
+				console.log(11111);
 				uni.navigateBack({
-					delta:1
+					url:'pages/login/login'
 				})
 			},
 			// 注册按钮点击事件
 			tapRegister(){
 				if(this.isRegister){
 					uni.request({
-						url:'http://localhost:8082/user/login',
+						url:'http://localhost:8082/user/register',
 						data:{
 							user: this.user,
 							mail: this.mail,
 							pwd: this.pwd
 						},
 						method:'POST',
-						success:data=>{
+						success:feedbackMessage=>{
+							// console.log(feedbackMessage);
+							const { data } = feedbackMessage
 							console.log(data);
+							if(data.code === 200){
+								console.log(666);
+								uni.navigateTo({
+									url:'/pages/login/login'
+								})
+							}
+							this.user = ''
+							this.mail = ''
+							this.pwd = ''
+							this.isInvalidUsername = undefined
+							this.isInvalidEmail = undefined
 						}
 					})
 				}
