@@ -7,9 +7,6 @@ const sendMessage = require('../utils/sendEmail')
 //
 const userServer = require('../server/user')
 
-// encrypt decrypt  加密/解密
-
-const bcrypt = require('../utils/bcrypt')
 /* 
 状态码:
 200->成功
@@ -39,13 +36,24 @@ router.post('/register', async (req, res, next) => {
     code: 201,
     msg: 'fail'
   }
-  const encryptPwd = bcrypt.encrypt(pwd)
-  const result = await userServer.insertAccount(user, mail, encryptPwd)
+  const result = await userServer.insertAccount(user, mail, pwd)
   if (result.length >= 1) {
     feedbackMsg.code = 200
     feedbackMsg.msg = 'success !!'
   }
   res.send(feedbackMsg)
+})
+
+// 用户登录
+router.post('/login', async (req, res, next) => {
+  const { data, pwd } = req.body
+  const feedbackMsg = {
+    code: 201,
+    msg: 'fail'
+  }
+  const result = await userServer.loginAccount(data, pwd)
+  console.log(result)
+  res.send(result)
 })
 
 module.exports = router
