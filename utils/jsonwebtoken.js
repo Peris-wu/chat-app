@@ -1,7 +1,7 @@
 const jsonwebtoken = require('jsonwebtoken')
 const privateKey = 'peris'
 exports.sign = (data, outTime) => {
-  console.log(data)
+  // console.log(data)
   const token = jsonwebtoken.sign(data, privateKey, {
     expiresIn: outTime
   })
