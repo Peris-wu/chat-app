@@ -20,7 +20,6 @@ router.post('/isexist', async (req, res, next) => {
     msg: 'fail'
   }
   const result = await userServer.isAccountExist(user, mail)
-  console.log(result)
   if (result) {
     feedbackMsg.code = 200
     feedbackMsg.msg = 'success'
@@ -52,7 +51,6 @@ router.post('/login', async (req, res, next) => {
     msg: 'fail'
   }
   const result = await userServer.loginAccount(data, pwd)
-  console.log(result)
   res.send(result)
 })
 
