@@ -9,10 +9,13 @@
 		<view class="login-content">
 			<view class="login-text">登录</view>
 			<view class="login-description">您好,欢迎来到login!</view>
-			<input v-model="user" type="text" placeholder="用户名/邮箱"/>
+			<input v-model="data" type="text" placeholder="用户名/邮箱"/>
 			<input v-model="pwd" type="password" placeholder="密码"/>
 			
-			<button class="login-btn" @tap="login">登录</button>
+			<button 
+			class="login-btn" 
+			@tap="login"
+			>登录</button>
 		</view>
 	</view>
 </template>
@@ -21,9 +24,14 @@
 	export default {
 		data() {
 			return {
-				user:'',
+				data:'',
 				pwd:''
 			}
+		},
+		computed:{
+			// isActiveLoginBtn(){
+			// 	return this.data && this.pwd
+			// }
 		},
 		methods: {
 			toSignUp(){
@@ -32,16 +40,45 @@
 				})
 			},
 			login(){
-				if(this.user && this.pwd){
+				if(this.data && this.pwd){
 					uni.request({
 						url:'http://localhost:8082/user/login',
 						data:{
-							user: this.user,
+							data: this.data,
 							pwd: this.pwd
 						},
 						method:'POST',
-						success:data=>{
-							console.log(data);
+						success:feedBack=>{
+							const { data } = feedBack
+							if(data.code === 200){
+								uni.showToast({
+									title: '登录成功',
+									icon:'success',
+									duration:1000
+								})
+								
+								const userInfo = {
+									user: data.user,
+									imgUrl: data.imgUrl,
+									token: data.token
+								}
+								uni.setStorage({
+									key: 'user',
+									data: JSON.stringify(userInfo),
+									success:()=>{
+										console.log('setStorage success!!');
+									}
+								})
+								uni.navigateTo({
+									url: '/pages/index/index'
+								})
+							}else{
+								uni.showToast({
+									title: data.msg,
+									icon:'error',
+									duration:1000
+								})
+							}
 						}
 					})
 					return 

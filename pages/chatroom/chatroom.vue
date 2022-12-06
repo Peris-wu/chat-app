@@ -15,6 +15,7 @@
 				</template>
 				
 				<template v-slot:right>
+					
 					<view class="right">
 						<image @tap="toGroupDetail" src="../../static/images/template/05.jpg" mode="aspectFill"></image>
 					</view>
@@ -31,7 +32,7 @@
 			@scrolltoupper="setTop"
 			>
 			 <view class="loading-wrap" v-show="isShowLoading">
-				 <image :animation="animationLoading" src="../../static/images/chatroom/loading.png" mode="aspectFill"></image>
+				 <!-- <image :animation="animationLoading" src="../../static/images/chatroom/loading.png" mode="aspectFill"></image> -->
 			 </view>
 				<view :id="`msg${msgItem.tip}`" class="user-commom" :class="msgItem.id === 'b'? 'myself-right':'user-left'"  v-for="(msgItem,index) in msgs" :key="index">
 					<view class="msg-time" v-show="msgItem.time">
@@ -65,7 +66,7 @@
 								:style="{width:`${calWidth(msgItem.message.time)}px`}"
 								@tap="playAudio(msgItem)"
 							>
-								<image src="../../static/images/chatroom/voice-input.png" mode="aspectFill"></image>
+								<!-- <image src="../../static/images/chatroom/voice-input.png" mode="aspectFill"></image> -->
 								<span>
 									{{msgItem.message.time}}
 									<span>"</span>
@@ -86,7 +87,7 @@
 										:longitude="msgItem.message.longitude"
 										:markers="handlCover(msgItem)"
 									></map> -->
-									<image class="map" src="../../static/images/chatroom/map.png" mode="aspectFill"></image>
+									<!-- <image class="map" src="../../static/images/chatroom/map.png" mode="aspectFill"></image> -->
 								</view>
 							</view>
 						</view>
@@ -279,7 +280,7 @@
 			scrollToBottom(){
 				this.$nextTick(()=>{
 					const len = this.msgs.length
-					this.scrollIntoV = `msg${this.msgs[len-1].tip}`
+					this.scrollIntoV = `msg${this.msgs[len-1]?.tip}`
 				})
 			},
 			spaceTime(old_time,current_time){

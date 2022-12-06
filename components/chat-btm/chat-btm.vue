@@ -40,14 +40,14 @@
 				</view>
 			</view>
 			
-			<!-- <view class="left" v-show="!isKeyboard">
+			<view class="left" v-show="!isKeyboard">
 				<view>
 					<image src="../../static/images/chatroom/yy.png" mode="aspectFill"></image>
 				</view>
 				<view class="textarea-style">
 					按住说话
 				</view>
-			</view> -->
+			</view>
 			
 			
 			<view>
@@ -69,13 +69,18 @@
 		<view class="options" v-show="isShowOption">
 			<view class="cancel-send">
 				<view class="cancel">
-					<image v-show="!inptLen" src="../../static/images/chatroom/cancel.png" mode="aspectFill"></image>
-					<image 
+					<image
+						src="../../static/images/chatroom/cancel.png" 
+						mode="aspectFill"
+						@tap="cancelMsg"
+					></image>
+					<!-- <image v-show="!inptLen" src="../../static/images/chatroom/cancel.png" mode="aspectFill"></image> -->
+					<!-- <image 
 						v-show="inptLen" 
 						src="../../static/images/chatroom/cancel-b.png" 
 						mode="aspectFill"
 						@tap="cancelMsg"
-					></image>
+					></image> -->
 				</view>
 				<view class="send" :class="{'send-extral':inptLen}" @tap="sendMsg">发送</view>
 			</view>
@@ -103,6 +108,7 @@
 				<span class="title">文件</span>
 			</view>
 		</view>
+		
 	</view>
 </template>
 

@@ -9,12 +9,12 @@
 		<view class="register-content">
 			<view class="register-text">注册</view>
 			<view class="content-text">
-				<input @blur="usernameBlur" v-model="user" type="text" placeholder="请输入名字" placeholder-style="color:#808080;fontSize:28rpx"/>
+				<input v-model="user" type="text" placeholder="请输入名字" placeholder-style="color:#808080;fontSize:28rpx"/>
 				<image v-if="isInvalidUsername === true" src="../../static/images/register/pass.png"></image>
 				<view v-else-if="isInvalidUsername === false" class="username-error-tip">{{userErrorTip}}</view>
 			</view>
 			<view class="content-email">
-				<input @blur="emailBlur" v-model="mail" type="text" placeholder="请输入邮箱" placeholder-style="color:#808080;fontSize:28rpx"/>
+				<input v-model="mail" type="text" placeholder="请输入邮箱" placeholder-style="color:#808080;fontSize:28rpx"/>
 				<image v-if="isInvalidEmail === true" src="../../static/images/register/pass.png"></image>
 				<view v-else-if="isInvalidEmail === false" class="email-error-tip">{{mailErrorTip}}</view>
 			</view>
@@ -33,6 +33,7 @@
 </template>
 
 <script>
+	import {debounce} from '@/utils/debounce.js'
 	export default {
 		data() {
 			return {
@@ -44,7 +45,8 @@
 				isInvalidPwd:false,
 				defaultStatus:false,
 				userErrorTip:'请填写用户名',
-				mailErrorTip: '邮箱错误'
+				mailErrorTip: '邮箱错误',
+				debounceFn: null
 			}
 		},
 		computed:{
@@ -58,14 +60,19 @@
 		watch:{
 			user:{
 				handler(newVal,oldVal){
-					this.isExist(newVal)
+					// this.isExist(newVal)
+					this.checkUser()
 				}
 			},
 			mail:{
 				handler(newVal,oldVal){
-					this.isExist(newVal)
+					// this.debounceFn(newVal)
+					this.checkMail()
 				}
 			}
+		},
+		mounted(){
+			this.debounceFn = debounce(this.isExist,500)
 		},
 		methods: {
 			switchoverStatus(){
@@ -102,13 +109,14 @@
 					}
 				})
 			},
-			usernameBlur(){
+			checkUser(){
 				this.user ? this.isInvalidUsername = true : this.isInvalidUsername = false
 				if(this.user){
-					this.isExist(this.user)
+					// debounce(this.isExist)
+					this.debounceFn(this.user)
 				}
 			},
-			emailBlur(){
+			checkMail(){
 				if(this.mail.length === 0){
 					this.mailErrorTip = '请填写邮箱'
 					this.isInvalidEmail = false
@@ -118,7 +126,8 @@
 				let result = reg.test(this.mail)
 				result ? this.isInvalidEmail = true:this.isInvalidEmail = false
 				if(result){
-					this.isExist(null,this.mail)
+					// this.isExist(null,this.mail)
+					this.debounceFn(null,this.mail)
 				}
 			},
 			toSignIn(){

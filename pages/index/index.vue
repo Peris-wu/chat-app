@@ -1,7 +1,9 @@
 <template>
 	<view class="content">
 		<chat-header>
-			<!-- <template v-slot:left></template> -->
+			<template v-slot:left>
+				<image style="width: 68rpx" :src="userIcon"></image>
+			</template>
 			<template v-slot:right>
 				<image class="img-search-add" src="../../static/images/index/search@3x.png"></image>
 				<image 
@@ -47,7 +49,8 @@
 		data() {
 			return {
 				title: 'Hello',
-				friends:[]
+				friends:[],
+				userIcon: ''
 			}
 		},
 		filters:{
@@ -103,6 +106,10 @@
 		},
 		onLoad() {
 			this.getFriendsList()
+		},
+		mounted(){
+			const userInfo = JSON.parse(uni.getStorageSync('user'))
+			this.userIcon = userInfo.imgUrl
 		},
 		methods: {
 			getFriendsList(){
