@@ -20,6 +20,19 @@ class Base {
       })
       .select()
   }
+
+  // 模糊搜索
+  selectLike(str) {
+    return knex(this.tableName)
+      .where(function () {
+        this.where('user', 'like', `%${str}%`).orWhere(
+          'mail',
+          'like',
+          `%${str}%`
+        )
+      })
+      .select()
+  }
 }
 
 module.exports = Base
