@@ -1,8 +1,16 @@
 const express = require('express')
 const router = express.Router()
-const testController = require('../controller/test')
+const resolve = require('path')
 
-router.get('/', testController.test.show)
+const fs = require('fs')
+// const testController = require('../controller/test')
+
+router.post('/test', (req, res, next) => {
+  const { testData } = req.body
+  if (!testData) {
+    throw new Error('测试错误')
+  }
+})
 
 module.exports = router
 

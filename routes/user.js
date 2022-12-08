@@ -54,4 +54,10 @@ router.post('/login', async (req, res, next) => {
   res.send(result)
 })
 
+// 模糊搜索好友
+router.post('/searchFriends', async (req, res, next) => {
+  const { friendName } = req.body
+  const result = await userServer.searchFriendLike(friendName)
+  res.send(result)
+})
 module.exports = router

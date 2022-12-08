@@ -91,3 +91,15 @@ const loginAccount = async (data, pwd) => {
 }
 
 exports.loginAccount = loginAccount
+
+// 模糊搜索好友
+
+const searchFriendLike = async (str) => {
+  try {
+    const result = await userController.findLikeUser(str)
+    return result
+  } catch (err) {
+    console.log(err)
+  }
+}
+exports.searchFriendLike = searchFriendLike
