@@ -33,6 +33,12 @@ class Base {
       })
       .select()
   }
+
+  // 用户详情
+  selectUserDetail = (id) => knex(this.tableName).where('id', id).select()
+
+  //判断是否为好友
+  isFriend = (params) => knex(this.tableName).where(params).select()
 }
 
 module.exports = Base

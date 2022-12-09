@@ -103,3 +103,17 @@ const searchFriendLike = async (str) => {
   }
 }
 exports.searchFriendLike = searchFriendLike
+
+// 获取用户详情
+
+const selectUserDetail = async (token, next) => {
+  try {
+    const { id } = jwt.verify(token)
+    console.log(id)
+    const result = await userController.selectUserDetail(id)
+    return result
+  } catch (err) {
+    next(`error selectUserDetail->${err}`)
+  }
+}
+exports.selectUserDetail = selectUserDetail
