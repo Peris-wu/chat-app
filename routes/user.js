@@ -60,4 +60,12 @@ router.post('/searchFriends', async (req, res, next) => {
   const result = await userServer.searchFriendLike(friendName)
   res.send(result)
 })
+
+// 获取用户详情
+// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjAsImlhdCI6MTY3MDYxMTUwNiwiZXhwIjoxNjcwNjk3OTA2fQ.-inl4y1FSCrpgxwg0y4OsIBKYgEZfMGZ7wMa0b-s8k0
+router.get('/detail', async (req, res, next) => {
+  const { token } = req.query
+  const result = await userServer.selectUserDetail(token, next)
+  res.send(result)
+})
 module.exports = router
