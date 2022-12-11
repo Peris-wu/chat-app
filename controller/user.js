@@ -6,7 +6,9 @@ const userController = {
   findUser: (data01, data02) => User.selectWhere(data01, data02),
   findLikeUser: (str) => User.selectLike(str),
   // 获取用户详情
-  selectUserDetail: (id) => User.selectUserDetail(id)
+  selectUserDetail: (id) => User.selectUserDetail(id),
+  // 修改用户详情
+  modifyUserDetail: (id, params) => User.modifyUserDetail(id, params)
 }
 
 module.exports = userController

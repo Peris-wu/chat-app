@@ -37,6 +37,10 @@ class Base {
   // 用户详情
   selectUserDetail = (id) => knex(this.tableName).where('id', id).select()
 
+  // 修改用户详情
+  modifyUserDetail = (id, params) =>
+    knex(this.tableName).where('id', id).update(params)
+
   //判断是否为好友
   isFriend = (params) => knex(this.tableName).where(params).select()
 }

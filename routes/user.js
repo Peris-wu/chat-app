@@ -62,10 +62,19 @@ router.post('/searchFriends', async (req, res, next) => {
 })
 
 // 获取用户详情
-// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjAsImlhdCI6MTY3MDYxMTUwNiwiZXhwIjoxNjcwNjk3OTA2fQ.-inl4y1FSCrpgxwg0y4OsIBKYgEZfMGZ7wMa0b-s8k0
 router.get('/detail', async (req, res, next) => {
   const { token } = req.query
   const result = await userServer.selectUserDetail(token, next)
   res.send(result)
+})
+
+// 修改用户详情
+router.post('/modifyUserDetail', async (req, res, next) => {
+  const params = { ...req.body }
+  const result = await userServer.modifyUserDetail(params, next)
+  console.log(result)
+  res.send({
+    status: result
+  })
 })
 module.exports = router
