@@ -117,3 +117,17 @@ const selectUserDetail = async (token, next) => {
   }
 }
 exports.selectUserDetail = selectUserDetail
+
+// 修改用户详情
+
+const modifyUserDetail = async (params, next) => {
+  try {
+    const { id } = jwt.verify(params.token)
+    if (params.token) delete params.token
+    const result = await userController.modifyUserDetail(id, params)
+    return result
+  } catch (err) {
+    next(`modifyUserDetail err -> ${err}`)
+  }
+}
+exports.modifyUserDetail = modifyUserDetail
