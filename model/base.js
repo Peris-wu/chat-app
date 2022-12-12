@@ -43,6 +43,20 @@ class Base {
 
   //判断是否为好友
   isFriend = (params) => knex(this.tableName).where(params).select()
+
+  // 添加好友
+  buildFriend = (params) => {
+    return knex(this.tableName).insert(params)
+  }
+  // 更新好友申请的时间
+  updateApplyTime = (params, updateParams) => {
+    return knex(this.tableName).where(params).update(updateParams)
+  }
+
+  // 插入一条消息
+  inserMessage = (params) => {
+    return knex(this.tableName).insert(params)
+  }
 }
 
 module.exports = Base

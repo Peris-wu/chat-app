@@ -78,3 +78,14 @@ router.post('/modifyUserDetail', async (req, res, next) => {
   })
 })
 module.exports = router
+
+// 申请好友
+router.post('/applyFriend', async (req, res, next) => {
+  const params = { ...req.body }
+  const result = await userServer.applyFriend(params, next)
+  // console.log(result)
+  res.send({
+    status: result
+  })
+})
+module.exports = router

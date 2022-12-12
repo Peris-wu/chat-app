@@ -1,4 +1,11 @@
+// 用户 Controller
 const userController = require('../controller/user')
+
+// 好友 Controller
+const friendsController = require('../controller/friends')
+
+// 消息 Controller
+const messageServer = require('./message')
 
 // encrypt decrypt  加密/解密
 const bcrypt = require('../utils/bcrypt')
@@ -131,3 +138,78 @@ const modifyUserDetail = async (params, next) => {
   }
 }
 exports.modifyUserDetail = modifyUserDetail
+
+// 申请好友
+const applyFriend = async (params, next) => {
+  try {
+    const { id } = jwt.verify(params.token)
+    if (params.token) delete params.token
+    // 判断好友表是否有申请的记录
+    const handleParams = {
+      userId: id,
+      fId: params.fId
+    }
+    const isExist = await friendsController.isFriends(handleParams)
+    // console.log(isExist)
+    if (isExist.length) {
+      // 更新 好友申请的时间
+      const now = new Date()
+      // 申请者
+      const applyResult = await friendsController.updateApplyTime(
+        {
+          userId: id,
+          fId: params.fId
+        },
+        {
+          time: now
+        }
+      )
+
+      // 被申请者
+      const checkResult = await friendsController.updateApplyTime(
+        {
+          userId: params.fId,
+          fId: id
+        },
+        {
+          time: now
+        }
+      )
+    } else {
+      // 添加两条记录
+      // 申请者userId 被申请者fId  state 2
+      // 申请者fId 被申请者userId state 1
+
+      // 申请者
+      const applyResult = await friendsController.buildFriend({
+        userId: id,
+        fId: params.fId,
+        msg: params.msg,
+        state: 2,
+        time: new Date(),
+        lastTime: new Date()
+      })
+
+      // 被申请者
+      const checkResult = await friendsController.buildFriend({
+        userId: params.fId,
+        fId: id,
+        msg: params.msg,
+        state: 1,
+        time: new Date(),
+        lastTime: new Date()
+      })
+    }
+    // 向被申请者插入一条message
+    const messageResult = await messageServer.insertMessage(
+      params.fId,
+      id,
+      params.msg,
+      0,
+      next
+    )
+  } catch (err) {
+    next(`applyFriend error -> ${err}`)
+  }
+}
+exports.applyFriend = applyFriend
