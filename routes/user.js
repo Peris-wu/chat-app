@@ -77,13 +77,21 @@ router.post('/modifyUserDetail', async (req, res, next) => {
     status: result
   })
 })
-module.exports = router
-
 // 申请好友
 router.post('/applyFriend', async (req, res, next) => {
   const params = { ...req.body }
   const result = await userServer.applyFriend(params, next)
   // console.log(result)
+  res.send({
+    status: result
+  })
+})
+
+// 通过好友申请
+
+router.post('/passApply', async (req, res, next) => {
+  const params = req.body
+  const result = await userServer.passApply(params, next)
   res.send({
     status: result
   })

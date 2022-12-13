@@ -33,7 +33,6 @@ const updateApplyTime = async (params, updateParams) => {
 exports.updateApplyTime = updateApplyTime
 
 // 申请好友关系
-
 const buildFriend = async (params) => {
   try {
     const applyResult = await friendsController.buildFriend(params)
@@ -43,3 +42,18 @@ const buildFriend = async (params) => {
   }
 }
 exports.buildFriend = buildFriend
+
+// 通过好友申请
+const passApply = async (whereParams, updateParams) => {
+  try {
+    const applyResult = await friendsController.passApply(
+      whereParams,
+      updateParams
+    )
+    console.log('!!!')
+    return applyResult
+  } catch (err) {
+    next(`passApply err -> ${err}`)
+  }
+}
+exports.passApply = passApply

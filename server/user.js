@@ -213,3 +213,36 @@ const applyFriend = async (params, next) => {
   }
 }
 exports.applyFriend = applyFriend
+
+// 通过好友申请
+
+const passApply = async (params, next) => {
+  try {
+    const { id } = jwt.verify(params.token)
+    if (params.token) delete params.token
+    const whereParams_user = {
+      userId: id,
+      fId: params.fId
+    }
+    const whereParams_f = {
+      userId: params.fId,
+      fId: id
+    }
+    const updateParams = {
+      state: 0
+    }
+    // 审核者
+    const userResult = await friendsServer.passApply(
+      whereParams_user,
+      updateParams
+    )
+    // 申请者
+    const applyResult = await friendsServer.passApply(
+      whereParams_f,
+      updateParams
+    )
+  } catch (err) {
+    next(`passApply err -> ${err}`)
+  }
+}
+exports.passApply = passApply
