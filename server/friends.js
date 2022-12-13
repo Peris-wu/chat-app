@@ -7,12 +7,39 @@ const bcrypt = require('../utils/bcrypt')
 const jwt = require('../utils/jsonwebtoken')
 
 // 判断是否为好友
-const isFriends = async (userId, fId, next) => {
+const isFriends = async (params, next) => {
   try {
-    const result = await friendsController.isFriends(userId, fId)
+    const result = await friendsController.isFriends(params)
     return result
   } catch (err) {
     next(`isFriends error -> ${err}`)
   }
 }
 exports.isFriends = isFriends
+
+// 更新好友申请时间
+
+const updateApplyTime = async (params, updateParams) => {
+  try {
+    const updateResult = await friendsController.updateApplyTime(
+      params,
+      updateParams
+    )
+    return updateResult
+  } catch (err) {
+    next(`updateApplyTime err -> ${err}`)
+  }
+}
+exports.updateApplyTime = updateApplyTime
+
+// 申请好友关系
+
+const buildFriend = async (params) => {
+  try {
+    const applyResult = await friendsController.buildFriend(params)
+    return applyResult
+  } catch (err) {
+    next(`buildFriend err -> ${err}`)
+  }
+}
+exports.buildFriend = buildFriend
