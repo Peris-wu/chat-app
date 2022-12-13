@@ -50,10 +50,21 @@ const passApply = async (whereParams, updateParams) => {
       whereParams,
       updateParams
     )
-    console.log('!!!')
     return applyResult
   } catch (err) {
     next(`passApply err -> ${err}`)
   }
 }
 exports.passApply = passApply
+
+// 通过好友申请
+const deleteApply = async (params) => {
+  try {
+    const deleteResult = await friendsController.deleteApply(params)
+    console.log('!!!')
+    return deleteResult
+  } catch (err) {
+    next(`deleteApply err -> ${err}`)
+  }
+}
+exports.deleteApply = deleteApply

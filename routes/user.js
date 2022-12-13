@@ -88,10 +88,18 @@ router.post('/applyFriend', async (req, res, next) => {
 })
 
 // 通过好友申请
-
 router.post('/passApply', async (req, res, next) => {
   const params = req.body
   const result = await userServer.passApply(params, next)
+  res.send({
+    status: result
+  })
+})
+
+// 删除好友申请
+router.post('/deleteApply', async (req, res, next) => {
+  const params = req.body
+  const result = await userServer.deleteApply(params, next)
   res.send({
     status: result
   })
