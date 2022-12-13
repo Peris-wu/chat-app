@@ -49,7 +49,7 @@ class Base {
     return knex(this.tableName).insert(params)
   }
   // 更新好友申请的时间
-  updateApplyTime = (params, updateParams) => {
+  update = (params, updateParams) => {
     return knex(this.tableName).where(params).update(updateParams)
   }
 
