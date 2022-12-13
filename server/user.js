@@ -2,7 +2,7 @@
 const userController = require('../controller/user')
 
 // 好友 Controller
-const friendsController = require('../controller/friends')
+const friendsServer = require('./friends')
 
 // 消息 Controller
 const messageServer = require('./message')
@@ -149,13 +149,13 @@ const applyFriend = async (params, next) => {
       userId: id,
       fId: params.fId
     }
-    const isExist = await friendsController.isFriends(handleParams)
+    const isExist = await friendsServer.isFriends(handleParams, next)
     // console.log(isExist)
     if (isExist.length) {
       // 更新 好友申请的时间
       const now = new Date()
       // 申请者
-      const applyResult = await friendsController.updateApplyTime(
+      const applyResult = await friendsServer.updateApplyTime(
         {
           userId: id,
           fId: params.fId
@@ -166,7 +166,7 @@ const applyFriend = async (params, next) => {
       )
 
       // 被申请者
-      const checkResult = await friendsController.updateApplyTime(
+      const checkResult = await friendsServer.updateApplyTime(
         {
           userId: params.fId,
           fId: id
@@ -181,7 +181,7 @@ const applyFriend = async (params, next) => {
       // 申请者fId 被申请者userId state 1
 
       // 申请者
-      const applyResult = await friendsController.buildFriend({
+      const applyResult = await friendsServer.buildFriend({
         userId: id,
         fId: params.fId,
         msg: params.msg,
@@ -191,7 +191,7 @@ const applyFriend = async (params, next) => {
       })
 
       // 被申请者
-      const checkResult = await friendsController.buildFriend({
+      const checkResult = await friendsServer.buildFriend({
         userId: params.fId,
         fId: id,
         msg: params.msg,
