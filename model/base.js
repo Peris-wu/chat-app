@@ -53,9 +53,13 @@ class Base {
     return knex(this.tableName).where(params).update(updateParams)
   }
 
-  // 插入一条消息
+  // 插入一条记录
   inserMessage = (params) => {
     return knex(this.tableName).insert(params)
+  }
+  // 删除记录
+  delete = (params) => {
+    return knex(this.tableName).where(params).delete()
   }
 }
 

@@ -246,3 +246,24 @@ const passApply = async (params, next) => {
   }
 }
 exports.passApply = passApply
+
+// 删除好友申请
+
+const deleteApply = async (params, next) => {
+  try {
+    const { id } = jwt.verify(params.token)
+    if (params.token) delete params.token
+    console.log(params)
+    const deleteResult = await friendsServer.deleteApply(
+      {
+        userId: id,
+        fId: params.fId
+      },
+      next
+    )
+    return deleteResult
+  } catch (err) {
+    next(`deleteApply err -> ${err}`)
+  }
+}
+exports.deleteApply = deleteApply
