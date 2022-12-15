@@ -18,6 +18,7 @@ app.use(methodOverride())
 
 // const testRouter = require('./routes/test')
 const userRouter = require('./routes/user')
+const uploadRouter = require('./routes/upload')
 const testRouter = require('./routes/test')
 
 const server = app.listen(port, () => {
@@ -25,7 +26,7 @@ const server = app.listen(port, () => {
 })
 
 app.use('/', testRouter)
-
+app.use('/file', uploadRouter)
 app.use('/user', userRouter)
 
 // app.post('/test', (req, res, next) => {
