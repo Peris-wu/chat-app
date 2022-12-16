@@ -4,7 +4,6 @@ const router = express.Router()
 
 router.post('/upload', upload.array('image', 11), (req, res, next) => {
   // const params = req.files
-  console.log(req)
   res.send({
     msg: 'success!! '
   })
